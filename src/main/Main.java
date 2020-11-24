@@ -6,7 +6,10 @@ import common.Constants;
 import fileio.Input;
 import fileio.InputLoader;
 import fileio.Writer;
+import myClasses.Actor;
 import org.json.simple.JSONArray;
+
+import myClasses.dataBase;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,6 +74,19 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
+
+        // Completam propria baza de date
+        dataBase my_db = new dataBase();
+
+        my_db.putActors(input);
+        my_db.putMovies(input);
+        my_db.putSerials(input);
+        my_db.putUsers(input);
+        System.out.println(input.getCommands());
+
+
+
+
 
         fileWriter.closeJSON(arrayResult);
     }
