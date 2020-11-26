@@ -10,7 +10,7 @@ import java.util.Map;
 public class Movie extends Show{
     private int duration;
     private int rating = 0;
-    private List<Double> ratings;
+    private ArrayList<Double> ratings = new ArrayList<>();
     private ArrayList<String> usersRecord= new ArrayList<>();
 
     public List<Double> getRatings() {

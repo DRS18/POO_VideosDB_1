@@ -6,16 +6,16 @@ import common.Constants;
 import fileio.Input;
 import fileio.InputLoader;
 import fileio.Writer;
-import myClasses.Actor;
 import org.json.simple.JSONArray;
 
-import myClasses.dataBase;
+import myClasses.DataBase;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -76,18 +76,64 @@ public final class Main {
         //TODO add here the entry point to your implementation
 
         // Completam propria baza de date
-        dataBase my_db = new dataBase();
+        DataBase my_db = new DataBase();
 
         my_db.putActors(input);
         my_db.putMovies(input);
         my_db.putSerials(input);
         my_db.putUsers(input);
-        my_db.putActions(input);
+//        my_db.putActions(input);
 
-        my_db.iterateThrowActions(arrayResult);
+//        my_db.iterateThroughActions(arrayResult);
+        for (int i = 0; i < input.getCommands().size(); i++) {
+            if (input.getCommands().get(i).getActionType().equals("command") &&
+                    input.getCommands().get(i).getType().equals("favorite")){
+//                System.out.println(actions.get(i).toString());
+                my_db.commandFavorite(input.getCommands().get(i).getActionId(),
+                        input.getCommands().get(i).getUsername(),
+                        input.getCommands().get(i).getTitle(),
+                        arrayResult);
+            } else if (input.getCommands().get(i).getActionType().equals("command") &&
+                    input.getCommands().get(i).getType().equals("view")) {
+//                System.out.println(input.getCommands().get(i).toString());
+                my_db.commandView(input.getCommands().get(i).getActionId(),
+                        input.getCommands().get(i).getUsername(),
+                        input.getCommands().get(i).getTitle(),
+                        arrayResult);
+            } else if (input.getCommands().get(i).getActionType().equals("command") &&
+                    input.getCommands().get(i).getType().equals("rating")) {
+//                System.out.println(input.getCommands().get(i).toString());
+                my_db.commandRating(input.getCommands().get(i).getActionId(),
+                        input.getCommands().get(i).getUsername(),
+                        input.getCommands().get(i).getTitle(),
+                        input.getCommands().get(i).getGrade(),
+                        input.getCommands().get(i).getSeasonNumber(),
+                        arrayResult);
+            } else if (input.getCommands().get(i).getActionType().equals("query") ) {
+                if (input.getCommands().get(i).getCriteria().equals("favorite")) {
+                    if (input.getCommands().get(i).getObjectType().equals("movies")) {
+
+//                        System.out.println(input.getCommands().get(i).toString());
+                        List<String> years = input.getCommands().get(i).getFilters().get(0);
+                        List<String> genres = input.getCommands().get(i).getFilters().get(1);
+                        List<String> words = input.getCommands().get(i).getFilters().get(2);
+                        List<String> awards = input.getCommands().get(i).getFilters().get(3);
+
+                        my_db.queryFavouriteMovies(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                words, awards, input.getCommands().get(i).getSortType());
+
+                    }
+                }
+            }
+        }
 
 
 
+
+
+
+//        System.out.println(input.getCommands());
 
         fileWriter.closeJSON(arrayResult);
     }
