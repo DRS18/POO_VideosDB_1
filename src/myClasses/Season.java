@@ -1,27 +1,19 @@
-package entertainment;
+package myClasses;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Information about a season of a tv show
- * <p>
- * DO NOT MODIFY
- */
-public final class Season {
-    /**
-     * Number of current season
-     */
-    private final int currentSeason;
-    /**
-     * Duration in minutes of a season
-     */
+public class Season {
+    private int currentSeason;
     private int duration;
-    /**
-     * List of ratings for each season
-     */
     private List<Double> ratings;
     private ArrayList<String> usersRecord= new ArrayList<>();
+
+    public ArrayList<String> getUsersRecord() {
+        return usersRecord;
+    }
 
     public Season(final int currentSeason, final int duration) {
         this.currentSeason = currentSeason;
@@ -29,24 +21,16 @@ public final class Season {
         this.ratings = new ArrayList<>();
     }
 
-    public ArrayList<String> getUsersRecord() {
-        return usersRecord;
+    public int getCurrentSeason() {
+        return currentSeason;
     }
 
     public int getDuration() {
         return duration;
     }
 
-    public void setDuration(final int duration) {
-        this.duration = duration;
-    }
-
     public List<Double> getRatings() {
         return ratings;
-    }
-
-    public void setRatings(final List<Double> ratings) {
-        this.ratings = ratings;
     }
 
     @Override
@@ -59,4 +43,3 @@ public final class Season {
                 + '}';
     }
 }
-

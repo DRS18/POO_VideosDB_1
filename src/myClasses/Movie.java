@@ -3,9 +3,27 @@ package myClasses;
 import fileio.MovieInputData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Movie extends Show{
     private int duration;
+    private int rating = 0;
+    private List<Double> ratings;
+    private ArrayList<String> usersRecord= new ArrayList<>();
+
+    public List<Double> getRatings() {
+        return ratings;
+    }
+
+    public ArrayList<String> getUsersRecord() {
+        return usersRecord;
+    }
+
+    public int getRating() {
+        return rating;
+    }
 
     public int getDuration() {
         return duration;

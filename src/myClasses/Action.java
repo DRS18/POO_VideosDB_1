@@ -3,7 +3,7 @@ package myClasses;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Action {
+public class Action {
     private int actionId;
     private String actionType;
     private String type;
@@ -70,5 +70,41 @@ public abstract class Action {
         return filters;
     }
 
+    public Action(int actionId, String actionType, String type, String username,
+                  String objectType, String sortType, String criteria, String title,
+                  String genre, int number, double grade, int seasonNumber,
+                  List<List<String>> filters) {
+        this.actionId = actionId;
+        this.actionType = actionType;
+        this.type = type;
+        this.username = username;
+        this.objectType = objectType;
+        this.sortType = sortType;
+        this.criteria = criteria;
+        this.title = title;
+        this.genre = genre;
+        this.number = number;
+        this.grade = grade;
+        this.seasonNumber = seasonNumber;
+        this.filters = filters;
+    }
 
+    @Override
+    public String toString() {
+        return "Action{" +
+                "actionId=" + actionId +
+                ", actionType='" + actionType + '\'' +
+                ", type='" + type + '\'' +
+                ", username='" + username + '\'' +
+                ", objectType='" + objectType + '\'' +
+                ", sortType='" + sortType + '\'' +
+                ", criteria='" + criteria + '\'' +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", number=" + number +
+                ", grade=" + grade +
+                ", seasonNumber=" + seasonNumber +
+                ", filters=" + filters +
+                '}';
+    }
 }

@@ -82,8 +82,9 @@ public final class Main {
         my_db.putMovies(input);
         my_db.putSerials(input);
         my_db.putUsers(input);
-        System.out.println(input.getCommands());
+        my_db.putActions(input);
 
+        my_db.iterateThrowActions();
 
 
 

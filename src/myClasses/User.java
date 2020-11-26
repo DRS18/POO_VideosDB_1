@@ -10,6 +10,11 @@ public class User {
     private String subscriptionType;
     private Map<String, Integer> history;
     private ArrayList<String> favoriteMovies;
+    private ArrayList<String> ratings;
+
+    public ArrayList<String> getRatings() {
+        return ratings;
+    }
 
     public String getUsername() {
         return username;
@@ -43,6 +48,7 @@ public class User {
                 ", subscriptionType='" + subscriptionType + '\'' +
                 ", history=" + history +
                 ", favoriteMovies=" + favoriteMovies +
+                ", ratings=" + ratings +
                 '}';
     }
 }
