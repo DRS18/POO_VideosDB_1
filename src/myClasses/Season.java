@@ -11,14 +11,19 @@ public class Season {
     private List<Double> ratings;
     private ArrayList<String> usersRecord= new ArrayList<>();
 
-    public ArrayList<String> getUsersRecord() {
-        return usersRecord;
-    }
-
     public Season(final int currentSeason, final int duration) {
         this.currentSeason = currentSeason;
         this.duration = duration;
         this.ratings = new ArrayList<>();
+        this.usersRecord = new ArrayList<>();
+    }
+
+    public Season getSeason() {
+        return this;
+    }
+
+    public ArrayList<String> getUsersRecord() {
+        return usersRecord;
     }
 
     public int getCurrentSeason() {

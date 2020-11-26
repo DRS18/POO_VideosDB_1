@@ -84,7 +84,7 @@ public final class Main {
         my_db.putUsers(input);
         my_db.putActions(input);
 
-        my_db.iterateThrowActions();
+        my_db.iterateThrowActions(arrayResult);
 
 
 

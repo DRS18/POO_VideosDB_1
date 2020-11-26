@@ -27,6 +27,7 @@ public final class Season {
         this.currentSeason = currentSeason;
         this.duration = duration;
         this.ratings = new ArrayList<>();
+        this.usersRecord = new ArrayList<>();
     }
 
     public ArrayList<String> getUsersRecord() {
