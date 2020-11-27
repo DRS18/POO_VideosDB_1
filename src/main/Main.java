@@ -131,7 +131,7 @@ public final class Main {
 
                 } else if (input.getCommands().get(i).getCriteria().equals("longest")) {
                     if (input.getCommands().get(i).getObjectType().equals("movies")) {
-                        System.out.println(input.getCommands().get(i).toString());
+//                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryLongestMovie(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
@@ -141,6 +141,16 @@ public final class Main {
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
                     }
 
+                } else if (input.getCommands().get(i).getCriteria().equals("most_viewed")) {
+                    if (input.getCommands().get(i).getObjectType().equals("movies")) {
+                        System.out.println(input.getCommands().get(i).toString());
+                        my_db.queryMostViewedMovie(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+
+                    } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
+
+                    }
                 }
             }
         }

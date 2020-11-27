@@ -1,5 +1,6 @@
 package myClasses;
 
+import com.sun.source.tree.Tree;
 import common.Constants;
 import fileio.Input;
 import org.json.simple.JSONArray;
@@ -520,11 +521,11 @@ public class DataBase {
                 message = message + eliminateBrackets;
             }
             message = message + "]";
-            System.out.println(message);
+//            System.out.println(message);
             object = writeObject(id, null, message);
         } else {
             String message = "Query result: []";
-            System.out.println(message);
+//            System.out.println(message);
             object = writeObject(id, null, message);
         }
 
@@ -578,7 +579,82 @@ public class DataBase {
                 message = message + eliminateBrackets;
             }
             message = message + "]";
-            System.out.println(message);
+//            System.out.println(message);
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+//            System.out.println(message);
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public Integer getNumberOfViews(Movie movie) {
+        int views = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getHistory().containsKey(movie.getTitle())) {
+                views += users.get(i).getHistory().get(movie.getTitle());
+            }
+        }
+
+        return views;
+    }
+
+    public void queryMostViewedMovie(int id, int number, List<String> years, List<String> genres,
+                                     List<String> words, List<String> awards, String sortType,
+                                     JSONArray arrayResult) {
+        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
+        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+        JSONObject object = null;
+
+        for (int i = 0; i < FoundMovies.size(); i++) {
+
+            if (indexing.containsKey(getNumberOfViews(FoundMovies.get(i))) &&
+                    getNumberOfViews(FoundMovies.get(i)) > 0) {
+                ArrayList<String> temp = indexing.get(getNumberOfViews(FoundMovies.get(i)));
+                temp.add(temp.size(), FoundMovies.get(i).getTitle());
+            } else if (getNumberOfViews(FoundMovies.get(i)) > 0){
+                ArrayList<String> list = new ArrayList<>();
+                list.add(list.size(), FoundMovies.get(i).getTitle());
+                indexing.put(getNumberOfViews(FoundMovies.get(i)), list);
+            }
+        }
+
+        if (indexing.size() > 0){
+            String message = "Query result: [";
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+
+            System.out.println(sortedMap.toString());
+            // Reverse order TreeMap
+            if (sortType.equals("desc")){
+                Set set = sortedMap.entrySet();
+                Iterator i = set.iterator();
+
+                while(i.hasNext()) {
+                    Map.Entry me = (Map.Entry)i.next();
+                    System.out.println(me.getValue());
+                }
+            }
+
+
+            int ok = 0;
+            for (Integer temp : sortedMap.keySet()) {
+                ok++;
+
+                if (ok == number) break;
+                if (ok > 1) {
+                    message = message + ", ";
+                }
+
+                String eliminateBrackets = sortedMap.get(temp).toString();
+                eliminateBrackets = eliminateBrackets.replaceAll("\\[", "").replaceAll("\\]","");
+//                System.out.println(sortedMap.get(temp).toString());
+                message = message + eliminateBrackets;
+            }
+            message = message + "]";
+//            System.out.println(message);
             object = writeObject(id, null, message);
         } else {
             String message = "Query result: []";
@@ -587,6 +663,8 @@ public class DataBase {
         }
 
         arrayResult.add(object);
+
     }
+
 
 }
