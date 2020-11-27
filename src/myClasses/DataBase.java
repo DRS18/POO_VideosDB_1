@@ -5,8 +5,9 @@ import fileio.Input;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static java.lang.Integer.parseInt;
 
 public class DataBase {
     private ArrayList<Actor>  actors  = new ArrayList<>();
@@ -14,6 +15,7 @@ public class DataBase {
     private ArrayList<Serial> serials = new ArrayList<>();
     private ArrayList<User>   users   = new ArrayList<>();
     public ArrayList<Action> actions = new ArrayList<>();
+    private Map<Integer, List<String>> gogu;
 
     private static DataBase instance = null;
 
@@ -271,9 +273,93 @@ public class DataBase {
         arrayResult.add(object);
     }
 
-    public void queryFavouriteMovies (int id, int number, List<String> years,
-                                      List<String> genres, List<String> words,
-                                      List<String> awards, String sortType) {
+    public Integer howManyFavourites (Movie movie) {
+        Integer n = 0;
 
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getHistory().containsKey(movie.getTitle()) &&
+                users.get(i).getFavoriteMovies().contains(movie.getTitle())) {
+                n++;
+            }
+        }
+
+
+        return n;
+    }
+
+    public void queryFavouriteMovies (int id, int number, List<String> years, List<String> genres,
+                                      List<String> words, List<String> awards, String sortType,
+                                      JSONArray arrayResult) {
+
+        ArrayList<Movie> FoundMovies = new ArrayList<>();
+        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+        JSONObject object = null;
+
+        int ok = 0;
+        for (int i = 0; i < movies.size(); i++) {
+            // Filter movies by year
+            ok = -1;
+            if (years != null) {
+                for (int j = 0; j < years.size(); j++) {
+                    if (years.get(j) != null && movies.get(i).getYear() == parseInt(years.get(j))) {
+                            ok = 0;
+                            break;
+                    }
+                }
+            } else {
+                ok = 0;
+            }
+
+            if (ok == -1) continue;
+
+            ok = -1;
+
+            // Filter movies by genres
+            if (genres != null) {
+                for (int j = 0; j < genres.size(); j++) {
+                    if (genres.get(j) != null && movies.get(i).getGenres().contains(genres.get(j))) {
+                        ok = 0;
+                    } else {
+                        ok = -1;
+                    }
+                }
+            } else {
+                ok = 0;
+            }
+
+            if (ok == -1) continue;
+
+            if (ok == 0) {
+                FoundMovies.add(movies.get(i));
+            }
+        }
+
+        // Now we have movies by filters
+        for (int i = 0; i < FoundMovies.size(); i++) {
+            if (indexing.containsKey(howManyFavourites(FoundMovies.get(i)))) {
+                ArrayList<String> temp = indexing.get(howManyFavourites(FoundMovies.get(i)));
+                temp.add(temp.size(), FoundMovies.get(i).getTitle());
+            } else {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(list.size(), FoundMovies.get(i).getTitle());
+                indexing.put(howManyFavourites(FoundMovies.get(i)), list);
+            }
+        }
+
+
+
+        if (indexing.size() > 0){
+            String message = "Query result: ";
+            for (Integer temp : indexing.keySet()) {
+                message = message + indexing.get(temp);
+            }
+//            System.out.println(message);
+            object = writeObject(id, null, message);
+        }
+
+//        Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+//        System.out.println("AFTER SORTING");
+//        System.out.println(sortedMap.toString());
+        arrayResult.add(object);
     }
 }

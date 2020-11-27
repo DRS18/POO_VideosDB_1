@@ -121,7 +121,7 @@ public final class Main {
 
                         my_db.queryFavouriteMovies(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                words, awards, input.getCommands().get(i).getSortType());
+                                words, awards, input.getCommands().get(i).getSortType(), arrayResult);
 
                     }
                 }
