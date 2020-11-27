@@ -110,20 +110,37 @@ public final class Main {
                         input.getCommands().get(i).getSeasonNumber(),
                         arrayResult);
             } else if (input.getCommands().get(i).getActionType().equals("query") ) {
+                List<String> years = input.getCommands().get(i).getFilters().get(0);
+                List<String> genres = input.getCommands().get(i).getFilters().get(1);
+                List<String> words = input.getCommands().get(i).getFilters().get(2);
+                List<String> awards = input.getCommands().get(i).getFilters().get(3);
                 if (input.getCommands().get(i).getCriteria().equals("favorite")) {
+
                     if (input.getCommands().get(i).getObjectType().equals("movies")) {
-
-//                        System.out.println(input.getCommands().get(i).toString());
-                        List<String> years = input.getCommands().get(i).getFilters().get(0);
-                        List<String> genres = input.getCommands().get(i).getFilters().get(1);
-                        List<String> words = input.getCommands().get(i).getFilters().get(2);
-                        List<String> awards = input.getCommands().get(i).getFilters().get(3);
-
                         my_db.queryFavouriteMovies(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                words, awards, input.getCommands().get(i).getSortType(), arrayResult);
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
 
+                    } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
+//                        System.out.println(input.getCommands().get(i).toString());
+
+                        my_db.queryFavouriteShows(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
                     }
+
+                } else if (input.getCommands().get(i).getCriteria().equals("longest")) {
+                    if (input.getCommands().get(i).getObjectType().equals("movies")) {
+                        System.out.println(input.getCommands().get(i).toString());
+                        my_db.queryLongestMovie(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                    } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
+                        my_db.queryLongestSerial(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                    }
+
                 }
             }
         }

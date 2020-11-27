@@ -287,23 +287,20 @@ public class DataBase {
         return n;
     }
 
-    public void queryFavouriteMovies (int id, int number, List<String> years, List<String> genres,
-                                      List<String> words, List<String> awards, String sortType,
-                                      JSONArray arrayResult) {
-
-        ArrayList<Movie> FoundMovies = new ArrayList<>();
-        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
-        JSONObject object = null;
+    public ArrayList<Movie> FoundMoviesByFilters (List<String> years, List<String> genres,
+                                                List<String> words, List<String> awards,
+                                                ArrayList<Movie> shows) {
+        ArrayList<Movie> result = new ArrayList<>();
 
         int ok = 0;
-        for (int i = 0; i < movies.size(); i++) {
+        for (int i = 0; i < shows.size(); i++) {
             // Filter movies by year
             ok = -1;
             if (years != null) {
                 for (int j = 0; j < years.size(); j++) {
-                    if (years.get(j) != null && movies.get(i).getYear() == parseInt(years.get(j))) {
-                            ok = 0;
-                            break;
+                    if (years.get(j) != null && shows.get(i).getYear() == parseInt(years.get(j))) {
+                        ok = 0;
+                        break;
                     }
                 }
             } else {
@@ -317,7 +314,7 @@ public class DataBase {
             // Filter movies by genres
             if (genres != null) {
                 for (int j = 0; j < genres.size(); j++) {
-                    if (genres.get(j) != null && movies.get(i).getGenres().contains(genres.get(j))) {
+                    if (genres.get(j) != null && shows.get(i).getGenres().contains(genres.get(j))) {
                         ok = 0;
                     } else {
                         ok = -1;
@@ -330,16 +327,30 @@ public class DataBase {
             if (ok == -1) continue;
 
             if (ok == 0) {
-                FoundMovies.add(movies.get(i));
+                result.add(shows.get(i));
             }
         }
 
+        return result;
+    }
+
+    public void queryFavouriteMovies (int id, int number, List<String> years, List<String> genres,
+                                      List<String> words, List<String> awards, String sortType,
+                                      JSONArray arrayResult) {
+
+        ArrayList<Movie> FoundMovies = null;
+        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+        JSONObject object = null;
+
+        FoundMovies = FoundMoviesByFilters(years, genres, words, awards, movies);
+
         // Now we have movies by filters
         for (int i = 0; i < FoundMovies.size(); i++) {
-            if (indexing.containsKey(howManyFavourites(FoundMovies.get(i)))) {
+            if (indexing.containsKey(howManyFavourites(FoundMovies.get(i))) &&
+                    howManyFavourites(FoundMovies.get(i)) > 0) {
                 ArrayList<String> temp = indexing.get(howManyFavourites(FoundMovies.get(i)));
                 temp.add(temp.size(), FoundMovies.get(i).getTitle());
-            } else {
+            } else if (howManyFavourites(FoundMovies.get(i)) > 0){
                 ArrayList<String> list = new ArrayList<>();
                 list.add(list.size(), FoundMovies.get(i).getTitle());
                 indexing.put(howManyFavourites(FoundMovies.get(i)), list);
@@ -350,10 +361,17 @@ public class DataBase {
 
         if (indexing.size() > 0){
             String message = "Query result: ";
-            for (Integer temp : indexing.keySet()) {
-                message = message + indexing.get(temp);
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+            int ok = 0;
+            for (Integer temp : sortedMap.keySet()) {
+                ok++;
+                if (ok == number) break;
+                message = message + sortedMap.get(temp);
             }
 //            System.out.println(message);
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
             object = writeObject(id, null, message);
         }
 
@@ -362,4 +380,213 @@ public class DataBase {
 //        System.out.println(sortedMap.toString());
         arrayResult.add(object);
     }
+
+    public ArrayList<Serial> FoundSerialsByFilters (List<String> years, List<String> genres,
+                                                  List<String> words, List<String> awards,
+                                                  ArrayList<Serial> shows) {
+        ArrayList<Serial> result = new ArrayList<>();
+
+        int ok = 0;
+        for (int i = 0; i < shows.size(); i++) {
+            // Filter movies by year
+            ok = -1;
+            if (years != null) {
+                for (int j = 0; j < years.size(); j++) {
+                    if (years.get(j) != null && shows.get(i).getYear() == parseInt(years.get(j))) {
+                        ok = 0;
+                        break;
+                    }
+                }
+            } else {
+                ok = 0;
+            }
+
+            if (ok == -1) continue;
+
+            ok = -1;
+
+            // Filter movies by genres
+            if (genres != null) {
+                for (int j = 0; j < genres.size(); j++) {
+                    if (genres.get(j) != null && shows.get(i).getGenres().contains(genres.get(j))) {
+                        ok = 0;
+                    } else {
+                        ok = -1;
+                    }
+                }
+            } else {
+                ok = 0;
+            }
+
+            if (ok == -1) continue;
+
+            if (ok == 0) {
+                result.add(shows.get(i));
+            }
+        }
+
+        return result;
+    }
+
+    public Integer howManyFavouritesSerials (Serial serial) {
+        Integer n = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getHistory().containsKey(serial.getTitle()) &&
+                    users.get(i).getFavoriteMovies().contains(serial.getTitle())) {
+                n++;
+            }
+        }
+
+        return n;
+    }
+
+    public void queryFavouriteShows(int id, int number, List<String> years, List<String> genres,
+                                    List<String> words, List<String> awards, String sortType,
+                                    JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, words, awards, serials);
+
+        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+        JSONObject object = null;
+
+        for (int i = 0; i < FoundSerials.size(); i++) {
+            if (indexing.containsKey(howManyFavouritesSerials(FoundSerials.get(i))) &&
+                    howManyFavouritesSerials(FoundSerials.get(i)) > 0) {
+                ArrayList<String> temp = indexing.get(howManyFavouritesSerials(FoundSerials.get(i)));
+                temp.add(temp.size(), FoundSerials.get(i).getTitle());
+            } else if (howManyFavouritesSerials(FoundSerials.get(i)) > 0){
+                ArrayList<String> list = new ArrayList<>();
+                list.add(list.size(), FoundSerials.get(i).getTitle());
+                indexing.put(howManyFavouritesSerials(FoundSerials.get(i)), list);
+            }
+//            System.out.println(howManyFavouritesSerials(FoundSerials.get(i)));
+//            System.out.println(indexing.get(howManyFavouritesSerials(FoundSerials.get(i))));
+        }
+
+
+
+        if (indexing.size() > 0){
+            String message = "Query result: ";
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+            int ok = 0;
+            for (Integer temp : sortedMap.keySet()) {
+                ok++;
+                if (ok == number) break;
+                message = message + sortedMap.get(temp);
+            }
+//            System.out.println(message);
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public void queryLongestMovie(int id, int number, List<String> years, List<String> genres,
+                                  List<String> words, List<String> awards, String sortType,
+                                  JSONArray arrayResult) {
+        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
+        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+        JSONObject object = null;
+
+        for (int i = 0; i < FoundMovies.size(); i++) {
+            if (indexing.containsKey(FoundMovies.get(i).getDuration())) {
+                ArrayList<String> temp = indexing.get(FoundMovies.get(i).getDuration());
+                temp.add(temp.size(), FoundMovies.get(i).getTitle());
+            } else {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(list.size(), FoundMovies.get(i).getTitle());
+                indexing.put(FoundMovies.get(i).getDuration(), list);
+            }
+        }
+
+        if (indexing.size() > 0){
+            String message = "Query result: [";
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+            int ok = 0;
+            for (Integer temp : sortedMap.keySet()) {
+                ok++;
+
+                if (ok == number) break;
+                if (ok > 1) {
+                    message = message + ", ";
+                }
+
+                String eliminateBrackets = sortedMap.get(temp).toString();
+                eliminateBrackets = eliminateBrackets.replaceAll("\\[", "").replaceAll("\\]","");
+//                System.out.println(sortedMap.get(temp).toString());
+                message = message + eliminateBrackets;
+            }
+            message = message + "]";
+            System.out.println(message);
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            System.out.println(message);
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public Integer getSerialDuration (Serial serial) {
+        int duration = 0;
+
+        for (int i = 0; i < serial.getSeasons().size(); i++) {
+            duration += serial.getSeasons().get(i).getDuration();
+        }
+
+        return duration;
+    }
+
+    public void queryLongestSerial(int id, int number, List<String> years, List<String> genres,
+                                  List<String> words, List<String> awards, String sortType,
+                                  JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, words, awards, serials);
+
+        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+        JSONObject object = null;
+
+        for (int i = 0; i < FoundSerials.size(); i++) {
+            if (indexing.containsKey(getSerialDuration(FoundSerials.get(i)))) {
+                ArrayList<String> temp = indexing.get(getSerialDuration(FoundSerials.get(i)));
+                temp.add(temp.size(), FoundSerials.get(i).getTitle());
+            } else {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(list.size(), FoundSerials.get(i).getTitle());
+                indexing.put(getSerialDuration(FoundSerials.get(i)), list);
+            }
+        }
+
+        if (indexing.size() > 0){
+            String message = "Query result: [";
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+            int ok = 0;
+            for (Integer temp : sortedMap.keySet()) {
+                ok++;
+
+                if (ok == number) break;
+                if (ok > 1) {
+                    message = message + ", ";
+                }
+
+                String eliminateBrackets = sortedMap.get(temp).toString();
+                eliminateBrackets = eliminateBrackets.replaceAll("\\[", "").replaceAll("\\]","");
+//                System.out.println(sortedMap.get(temp).toString());
+                message = message + eliminateBrackets;
+            }
+            message = message + "]";
+            System.out.println(message);
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            System.out.println(message);
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
 }
