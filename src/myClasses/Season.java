@@ -9,7 +9,7 @@ public class Season {
     private int currentSeason;
     private int duration;
     private List<Double> ratings;
-    private ArrayList<String> usersRecord= new ArrayList<>();
+    private ArrayList<String> usersRecord = new ArrayList<>();
 
     public Season(final int currentSeason, final int duration) {
         this.currentSeason = currentSeason;

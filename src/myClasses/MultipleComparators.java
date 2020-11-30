@@ -27,5 +27,11 @@ public final class MultipleComparators {
         }
     }
 
+    public final static class CompareUserByRatings implements Comparator<User> {
+        public int compare (final User a, final User b) {
+            return a.getNumberOfRatings() - b.getNumberOfRatings();
+        }
+    }
+
 
 }

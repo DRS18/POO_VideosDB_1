@@ -10,6 +10,20 @@ public class User {
     private String subscriptionType;
     private Map<String, Integer> history;
     private ArrayList<String> favoriteMovies;
+    private int numberOfRatings = 0;
+
+    public int getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    public void incrementNumberOfRatings() {
+        numberOfRatings++;
+    }
+
+    public void setNumberOfRatings(int numberOfRatings) {
+        this.numberOfRatings = numberOfRatings;
+    }
+
 //    private ArrayList<String> ratings = new ArrayList<>();
 
 //    public ArrayList<String> getRatings() {

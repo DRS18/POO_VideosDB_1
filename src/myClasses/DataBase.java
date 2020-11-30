@@ -276,6 +276,14 @@ public class DataBase {
                 }
             }
         }
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                users.get(i).incrementNumberOfRatings();
+                break;
+            }
+        }
+
+
         arrayResult.add(object);
     }
 
@@ -771,5 +779,43 @@ public class DataBase {
         arrayResult.add(object);
     }
 
+    public void queryRatingUsers(int id, int number, List<String> years, List<String> genres,
+                                 List<String> words, List<String> awards, String sortType,
+                                 JSONArray arrayResult) {
+        ArrayList<User> FoundUsers = new ArrayList<>();
+        JSONObject object = null;
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getNumberOfRatings() >= 1) {
+                FoundUsers.add(users.get(i));
+            }
+
+        }
+
+        FoundUsers.sort(new MultipleComparators.CompareUserByRatings());
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundUsers);
+        }
+
+        if (FoundUsers.size() > 0) {
+            String message = "Query result: [";
+            for (int i = 0; i < FoundUsers.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundUsers.get(i).getUsername();
+                if (i < FoundUsers.size() - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
 
 }

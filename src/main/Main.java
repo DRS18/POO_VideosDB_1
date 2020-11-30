@@ -165,12 +165,19 @@ public final class Main {
                                 input.getCommands().get(i).getNumber(), years, genres,
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
                     }
+                } else if (input.getCommands().get(i).getCriteria().equals("num_ratings")) {
+                    if (input.getCommands().get(i).getObjectType().equals("users")) {
+                        System.out.println(input.getCommands().get(i).toString());
+                        my_db.queryRatingUsers(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                    }
                 }
             }
         }
 
 
-//        System.out.println(arrayResult.toJSONString());
+        System.out.println(arrayResult.toJSONString());
 
 
 
