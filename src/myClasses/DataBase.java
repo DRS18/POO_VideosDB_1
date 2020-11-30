@@ -212,7 +212,12 @@ public class DataBase {
             }
         }
 
-        if (ok == -2) return;
+        if (ok == -2) {
+            String message = "error -> " + title + " is not seen";
+            object = writeObject(id, null, message);
+            arrayResult.add(object);
+            return;
+        }
 
         // if season == 0 => title is movie
         if (season == 0) {
@@ -590,12 +595,12 @@ public class DataBase {
         arrayResult.add(object);
     }
 
-    public Integer getNumberOfViews(Movie movie) {
+    public int getNumberOfViews(Show show) {
         int views = 0;
 
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getHistory().containsKey(movie.getTitle())) {
-                views += users.get(i).getHistory().get(movie.getTitle());
+            if (users.get(i).getHistory().containsKey(show.getTitle())) {
+                views += users.get(i).getHistory().get(show.getTitle());
             }
         }
 
@@ -606,64 +611,164 @@ public class DataBase {
                                      List<String> words, List<String> awards, String sortType,
                                      JSONArray arrayResult) {
         ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
-        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
         JSONObject object = null;
 
-        for (int i = 0; i < FoundMovies.size(); i++) {
 
-            if (indexing.containsKey(getNumberOfViews(FoundMovies.get(i))) &&
-                    getNumberOfViews(FoundMovies.get(i)) > 0) {
-                ArrayList<String> temp = indexing.get(getNumberOfViews(FoundMovies.get(i)));
-                temp.add(temp.size(), FoundMovies.get(i).getTitle());
-            } else if (getNumberOfViews(FoundMovies.get(i)) > 0){
-                ArrayList<String> list = new ArrayList<>();
-                list.add(list.size(), FoundMovies.get(i).getTitle());
-                indexing.put(getNumberOfViews(FoundMovies.get(i)), list);
+        for (int i = 0 ;i < FoundMovies.size(); i++) {
+            if (getNumberOfViews(FoundMovies.get(i)) > 0) {
+                FoundMovies.get(i).setNumberOfViews(getNumberOfViews(FoundMovies.get(i)));
+            } else {
+                FoundMovies.remove(i);
             }
         }
 
-        if (indexing.size() > 0){
+
+        FoundMovies.sort(new MultipleComparators.CompareMovieByNumberOfViews());
+
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundMovies);
+        }
+
+        if (FoundMovies.size() > 0) {
             String message = "Query result: [";
-            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
-
-            System.out.println(sortedMap.toString());
-            // Reverse order TreeMap
-            if (sortType.equals("desc")){
-                Set set = sortedMap.entrySet();
-                Iterator i = set.iterator();
-
-                while(i.hasNext()) {
-                    Map.Entry me = (Map.Entry)i.next();
-                    System.out.println(me.getValue());
+            for (int i = 0; i < FoundMovies.size(); i++) {
+                if (i == number) {
+                    break;
                 }
-            }
-
-
-            int ok = 0;
-            for (Integer temp : sortedMap.keySet()) {
-                ok++;
-
-                if (ok == number) break;
-                if (ok > 1) {
+                message = message + FoundMovies.get(i).getTitle();
+                if (i < FoundMovies.size() - 1) {
                     message = message + ", ";
                 }
-
-                String eliminateBrackets = sortedMap.get(temp).toString();
-                eliminateBrackets = eliminateBrackets.replaceAll("\\[", "").replaceAll("\\]","");
-//                System.out.println(sortedMap.get(temp).toString());
-                message = message + eliminateBrackets;
             }
             message = message + "]";
-//            System.out.println(message);
             object = writeObject(id, null, message);
         } else {
             String message = "Query result: []";
-            System.out.println(message);
             object = writeObject(id, null, message);
         }
 
         arrayResult.add(object);
+    }
 
+    public void queryMostViewedSerial(int id, int number, List<String> years, List<String> genres,
+                                     List<String> words, List<String> awards, String sortType,
+                                     JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, null, null, serials);
+        JSONObject object = null;
+
+        for (int i = 0 ;i < FoundSerials.size(); i++) {
+            if (getNumberOfViews(FoundSerials.get(i)) > 0) {
+                FoundSerials.get(i).setNumberOfViews(getNumberOfViews(FoundSerials.get(i)));
+            } else {
+                FoundSerials.remove(i);
+            }
+        }
+
+        FoundSerials.sort(new MultipleComparators.CompareMovieByNumberOfViews());
+
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundSerials);
+        }
+
+        if (FoundSerials.size() > 0) {
+            String message = "Query result: [";
+            for (int i = 0; i < FoundSerials.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundSerials.get(i).getTitle();
+                if (i < FoundSerials.size() - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public void queryRatingMovie (int id, int number, List<String> years, List<String> genres,
+                                  List<String> words, List<String> awards, String sortType,
+                                  JSONArray arrayResult) {
+        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
+        JSONObject object = null;
+
+//        for (int i = 0; i < FoundMovies.size(); i++) {
+//            System.out.print(FoundMovies.get(i).getTitle() + " - ");
+//        }
+
+        for (int i = 0; i < FoundMovies.size(); i++) {
+            if (FoundMovies.get(i).getRating() == 0) {
+                FoundMovies.remove(i);
+            }
+        }
+
+        FoundMovies.sort(new MultipleComparators.CompareMovieByRating());
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundMovies);
+        }
+
+        if (FoundMovies.size() > 0) {
+            String message = "Query result: [";
+            for (int i = 0; i < FoundMovies.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundMovies.get(i).getTitle();
+                if (i < FoundMovies.size() - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public void queryRatingSerial(int id, int number, List<String> years, List<String> genres,
+                                  List<String> words, List<String> awards, String sortType,
+                                  JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, null, null, serials);
+        JSONObject object = null;
+
+        for (int i = 0; i < FoundSerials.size(); i++) {
+            if (FoundSerials.get(i).getRating() == 0) {
+                FoundSerials.remove(i);
+            }
+        }
+
+        FoundSerials.sort(new MultipleComparators.CompareSerialByRating());
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundSerials);
+        }
+
+        if (FoundSerials.size() > 0) {
+            String message = "Query result: [";
+            for (int i = 0; i < FoundSerials.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundSerials.get(i).getTitle();
+                if (i < FoundSerials.size() - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
     }
 
 

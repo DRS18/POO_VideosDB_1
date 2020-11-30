@@ -143,20 +143,34 @@ public final class Main {
 
                 } else if (input.getCommands().get(i).getCriteria().equals("most_viewed")) {
                     if (input.getCommands().get(i).getObjectType().equals("movies")) {
-                        System.out.println(input.getCommands().get(i).toString());
+//                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryMostViewedMovie(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
 
                     } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
-
+                        my_db.queryMostViewedSerial(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                    }
+                } else if (input.getCommands().get(i).getCriteria().equals("ratings")) {
+                    if (input.getCommands().get(i).getObjectType().equals("movies")) {
+//                        System.out.println(input.getCommands().get(i).toString());
+                        my_db.queryRatingMovie(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                    } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
+//                        System.out.println(input.getCommands().get(i).toString());
+                        my_db.queryRatingSerial(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
                     }
                 }
             }
         }
 
 
-
+//        System.out.println(arrayResult.toJSONString());
 
 
 

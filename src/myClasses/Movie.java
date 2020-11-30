@@ -9,9 +9,12 @@ import java.util.Map;
 
 public class Movie extends Show{
     private int duration;
-    private int rating = 0;
+    private double rating = 0;
+
     private ArrayList<Double> ratings = new ArrayList<>();
     private ArrayList<String> usersRecord= new ArrayList<>();
+
+
 
     public List<Double> getRatings() {
         return ratings;
@@ -21,7 +24,18 @@ public class Movie extends Show{
         return usersRecord;
     }
 
-    public int getRating() {
+    public double getRating() {
+        double sum = 0;
+
+        for (int i = 0; i < ratings.size(); i++) {
+            sum += ratings.get(i);
+        }
+        if (sum > 0) {
+            rating = sum / ratings.size();
+        } else {
+            rating = 0;
+        }
+
         return rating;
     }
 

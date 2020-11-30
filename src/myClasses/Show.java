@@ -9,6 +9,15 @@ public abstract class Show {
     private int year;
     private ArrayList<String> cast;
     private ArrayList<String> genres;
+    private int NumberOfViews = 0;
+
+    public void setNumberOfViews(int numberOfViews) {
+        NumberOfViews = numberOfViews;
+    }
+
+    public int getNumberOfViews() {
+        return NumberOfViews;
+    }
 
     public String getTitle() {
         return title;
