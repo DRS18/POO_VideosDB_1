@@ -952,6 +952,21 @@ public class DataBase {
         if (FoundActors.size() == 0) {
             String message = "Query result: []";
             object = writeObject(id, null, message);
+        } else {
+            FoundActors.sort(new MultipleComparators.CompareActorByNumberOfAwards());
+            String message = "Query result: [";
+            for (int i = 0; i < FoundActors.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundActors.get(i).getName();
+                if (i < FoundActors.size() - 1 && i < number - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+//            System.out.println(message);
         }
 
         arrayResult.add(object);
@@ -969,7 +984,6 @@ public class DataBase {
                     ok = -1;
                     break;
                 }
-
             }
             if (ok == -1) {
                 break;
@@ -1009,10 +1023,38 @@ public class DataBase {
 //            System.out.println(message);
 
         }
+        arrayResult.add(object);
+    }
 
+    public void stardardRecommendation(int id, String type, String username,
+                                       JSONArray arrayResult) {
+        JSONObject object = null;
+        User unknownUser = null;
+        int ok = -1;
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                unknownUser = users.get(i);
+//                System.out.println("Found unknown " + unknownUser.getUsername());
+            }
+        }
+
+        for (int i = 0; i < movies.size(); i++) {
+            if (unknownUser.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+                String message = "StandardRecommendation result: " +
+                        movies.get(i).getTitle();
+                ok = 0;
+                object = writeObject(id, null, message);
+                break;
+            }
+        }
+
+        if (ok == -1) {
+            String message = "StandardRecommendation cannot be applied!";
+            object = writeObject(id, null, message);
+        }
 
         arrayResult.add(object);
-
     }
 
 }

@@ -109,7 +109,7 @@ public final class Main {
                         input.getCommands().get(i).getGrade(),
                         input.getCommands().get(i).getSeasonNumber(),
                         arrayResult);
-            } else if (input.getCommands().get(i).getActionType().equals("query") ) {
+            } else if (input.getCommands().get(i).getActionType().equals("query")) {
                 List<String> years = input.getCommands().get(i).getFilters().get(0);
                 List<String> genres = input.getCommands().get(i).getFilters().get(1);
                 List<String> words = input.getCommands().get(i).getFilters().get(2);
@@ -192,6 +192,14 @@ public final class Main {
                             words, awards, input.getCommands().get(i).getSortType(), arrayResult);
 
                 }
+            } else if (input.getCommands().get(i).getActionType().equals("recommendation")) {
+                if (input.getCommands().get(i).getType().equals("standard")) {
+//                    System.out.println(input.getCommands().get(i).toString());
+                    my_db.stardardRecommendation(input.getCommands().get(i).getActionId(),
+                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
+                            arrayResult);
+                }
+
             }
         }
 

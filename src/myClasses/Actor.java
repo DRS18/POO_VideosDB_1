@@ -13,6 +13,19 @@ public class Actor {
     private ArrayList<String> filmography;
     private Map<ActorsAwards, Integer> awards;
     private double filmographyRatingAverage;
+    private int numberOfAwards;
+
+    public int getNumberOfAwards() {
+        numberOfAwards = 0;
+
+        for (ActorsAwards key: awards.keySet()) {
+            numberOfAwards += awards.get(key);
+        }
+
+        return numberOfAwards;
+    }
+
+
 
     public double getFilmographyRatingAverage() {
         return filmographyRatingAverage;
