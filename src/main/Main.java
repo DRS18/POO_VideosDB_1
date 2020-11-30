@@ -167,8 +167,15 @@ public final class Main {
                     }
                 } else if (input.getCommands().get(i).getCriteria().equals("num_ratings")) {
                     if (input.getCommands().get(i).getObjectType().equals("users")) {
-                        System.out.println(input.getCommands().get(i).toString());
+//                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryRatingUsers(input.getCommands().get(i).getActionId(),
+                                input.getCommands().get(i).getNumber(), years, genres,
+                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                    }
+                } else if (input.getCommands().get(i).getCriteria().equals("average")) {
+                    if (input.getCommands().get(i).getObjectType().equals("actors")) {
+//                        System.out.println(input.getCommands().get(i).toString());
+                        my_db.queryAverageActors(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
                     }
@@ -177,7 +184,7 @@ public final class Main {
         }
 
 
-        System.out.println(arrayResult.toJSONString());
+//        System.out.println(arrayResult.toJSONString());
 
 
 

@@ -16,6 +16,7 @@ public class DataBase {
     private ArrayList<Serial> serials = new ArrayList<>();
     private ArrayList<User>   users   = new ArrayList<>();
     public ArrayList<Action> actions = new ArrayList<>();
+
     private Map<Integer, List<String>> gogu;
 
     private static DataBase instance = null;
@@ -226,13 +227,15 @@ public class DataBase {
                     // Check if user gave already rating
                     if (movies.get(i).getRatings().size() == 0) {
                         movies.get(i).getRatings().add(grade);
-                        movies.get(i).getUsersRecord().add(0, username);
+                        movies.get(i).getUsersRecord().add(username);
                         String message = "success -> " + title + " was rated with " +
                                 grade + " by " + username;
                         object = writeObject(id, null, message);
                     } else {
                         for (int j = 0; j < movies.get(i).getUsersRecord().size(); j++) {
-                            if (movies.get(i).getUsersRecord().equals(username)) {
+                            if (movies.get(i).getUsersRecord().get(j).equals(username)) {
+                                String message = "error -> " + title + " has been already rated";
+                                object = writeObject(id, null, message);
                                 ok = -2;
                             }
                         }
@@ -260,7 +263,9 @@ public class DataBase {
                         object = writeObject(id, null, message);
                     } else {
                         for (int j = 0; j < serials.get(i).getSeasons().get(season - 1).getUsersRecord().size(); j++) {
-                            if (serials.get(i).getSeasons().get(season - 1).getUsersRecord().equals(username)) {
+                            if (serials.get(i).getSeasons().get(season - 1).getUsersRecord().get(j).equals(username)) {
+                                String message = "error -> " + title + " has been already rated";
+                                object = writeObject(id, null, message);
                                 ok = -2;
                             }
                         }
@@ -810,6 +815,91 @@ public class DataBase {
             }
             message = message + "]";
             object = writeObject(id, null, message);
+        } else {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public double actualizeActorRatingAverage(Actor actor) {
+        double sum = 0;
+        int ok = 0;
+        int cnt = 0;
+
+        for (int i = 0; i < actor.getFilmography().size(); i++) {
+            ok = 0;
+//            System.out.println("Size of filmography is " + movies.size());
+            for (int j = 0; j < movies.size(); j++) {
+//                System.out.println("YES");
+                if (actor.getFilmography().get(i).equals(movies.get(j).getTitle())) {
+                    ok = -2; // => it's movie
+                    if (movies.get(j).getRating() != 0){
+                        sum += movies.get(j).getRating();
+                        cnt++;
+                    }
+                    break;
+                }
+            }
+            if (ok != -2) {
+                for (int j = 0; j < serials.size(); j++) {
+                    if (actor.getFilmography().get(i).equals(serials.get(j).getTitle())) {
+                        ok = -1; // => it's serial
+                        if (serials.get(j).getRating() != 0) {
+                            sum += serials.get(j).getRating();
+                            cnt++;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+//        System.out.println("ACTOR AVERAGE = " + sum);
+
+        if (sum == 0){
+            return sum;
+        } else {
+//            System.out.println(actor.getName() + " " + sum + "->" + actor.getFilmography().size());
+            return (sum/cnt);
+        }
+
+    }
+
+    public void queryAverageActors(int id, int number, List<String> years, List<String> genres,
+                                   List<String> words, List<String> awards, String sortType,
+                                   JSONArray arrayResult) {
+        ArrayList<Actor> FoundActors = new ArrayList<>();
+        JSONObject object = null;
+
+        for (int i = 0; i < actors.size(); i++) {
+//            System.out.println(actualizeActorRatingAverage("ACTOR AVERAGE "+actualizeActorRatingAverage(actors.get(i))));
+            actors.get(i).setFilmographyRatingAverage(actualizeActorRatingAverage(actors.get(i)));
+//            System.out.println(actors.get(i).getName() + " " +actors.get(i).getFilmographyRatingAverage());
+            if (actors.get(i).getFilmographyRatingAverage() > 0) {
+                FoundActors.add(actors.get(i));
+            }
+        }
+
+
+        FoundActors.sort(new MultipleComparators.CompareActorByName());
+        FoundActors.sort(new MultipleComparators.CompareActorByAverageRating());
+
+        if (FoundActors.size() > 0) {
+            String message = "Query result: [";
+            for (int i = 0; i < FoundActors.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundActors.get(i).getName();
+                if (i < FoundActors.size() - 1 && i < number - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+//            System.out.println(message);
         } else {
             String message = "Query result: []";
             object = writeObject(id, null, message);

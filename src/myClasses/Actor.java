@@ -2,6 +2,7 @@ package myClasses;
 
 import actor.ActorsAwards;
 import fileio.ActorInputData;
+import myClasses.DataBase;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -11,6 +12,19 @@ public class Actor {
     private String careerDescription;
     private ArrayList<String> filmography;
     private Map<ActorsAwards, Integer> awards;
+    private double filmographyRatingAverage;
+
+    public double getFilmographyRatingAverage() {
+        return filmographyRatingAverage;
+    }
+
+
+
+    public void setFilmographyRatingAverage(double filmographyRatingAverage) {
+        this.filmographyRatingAverage = filmographyRatingAverage;
+    }
+
+
 
     public Actor(String name, String careerDescription,
                  ArrayList<String> filmography,

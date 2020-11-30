@@ -9,6 +9,18 @@ public final class MultipleComparators {
         }
     }
 
+    public final static class CompareActorByName implements Comparator<Actor> {
+        public int compare(final Actor a, final Actor b) {
+            return a.getName().compareTo(b.getName());
+        }
+    }
+
+    public final static class CompareActorByAverageRating implements Comparator <Actor> {
+        public int compare(final Actor a, final Actor b) {
+            return Double.compare(a.getFilmographyRatingAverage(), b.getFilmographyRatingAverage());
+        }
+    }
+
     public final static class CompareMovieByNumberOfViews implements Comparator<Show> {
         public int compare (final Show show1, final Show show2) {
             return show1.getNumberOfViews() - show2.getNumberOfViews();
