@@ -1,5 +1,6 @@
 package myClasses;
 
+import actor.ActorsAwards;
 import com.sun.source.tree.Tree;
 import common.Constants;
 import fileio.Input;
@@ -906,6 +907,112 @@ public class DataBase {
         }
 
         arrayResult.add(object);
+    }
+
+    public ArrayList<Actor> FoundActorsByAwards (List<String> awards, ArrayList<Actor> actors) {
+        ArrayList<Actor> result = new ArrayList<>();
+
+        int ok = 0;
+        for (int i = 0; i < actors.size(); i++) {
+            ok = 0;
+            for (int j = 0; j < awards.size(); j++) {
+//                System.out.println("Looking for " + awards.get(j));
+                if (actors.get(i).getAwards().containsKey(ActorsAwards.valueOf(awards.get(j)))) {
+//                    System.out.println("CONTINEEE");
+                    continue;
+                } else {
+                    ok = -1;
+                    break;
+                }
+            }
+            if (ok != -1) {
+                result.add(actors.get(i));
+            }
+
+        }
+
+        return result;
+    }
+
+    public void queryAwardsActors(int id, int number, List<String> years, List<String> genres,
+                                  List<String> words, List<String> awards, String sortType,
+                                  JSONArray arrayResult) {
+        JSONObject object = null;
+        ArrayList<Actor> FoundActors = new ArrayList<>();
+
+        if (awards != null) {
+//            System.out.println("Avem de cautat " + awards.toString());
+            FoundActors = FoundActorsByAwards(awards, actors);
+        }
+
+
+        FoundActors.sort(new MultipleComparators.CompareActorByName());
+//        FoundActors.sort(new MultipleComparators.ValueComparator<>());
+//        System.out.println("FoundActors size = " + FoundActors.size());
+        if (FoundActors.size() == 0) {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+    public ArrayList<Actor> FoundActorsByWords (List<String> words, ArrayList<Actor> actors) {
+        ArrayList<Actor> result = new ArrayList<>();
+        int ok = 0;
+
+        for (int i = 0; i < actors.size(); i++) {
+            ok = 0;
+            for (int j = 0; j < words.size(); j++) {
+//                System.out.println("Look for " + words.get(j) + " in " + actors.get(i).getName());
+                if (actors.get(i).getCareerDescription().indexOf(words.get(j)) == -1) {
+                    ok = -1;
+                    break;
+                }
+
+            }
+            if (ok == -1) {
+                break;
+            } else {
+                result.add(actors.get(i));
+            }
+        }
+
+        return result;
+    }
+
+    public void queryDescriptionActors(int id, int number, List<String> years, List<String> genres,
+                                       List<String> words, List<String> awards, String sortType,
+                                       JSONArray arrayResult) {
+
+        ArrayList<Actor> FoundActors = new ArrayList<>();
+        JSONObject object = null;
+
+        FoundActors = FoundActorsByWords(words, actors);
+        if (FoundActors.size() == 0) {
+            String message = "Query result: []";
+            object = writeObject(id, null, message);
+        } else {
+            FoundActors.sort(new MultipleComparators.CompareActorByName());
+            String message = "Query result: [";
+            for (int i = 0; i < FoundActors.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundActors.get(i).getName();
+                if (i < FoundActors.size() - 1 && i < number - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+//            System.out.println(message);
+
+        }
+
+
+        arrayResult.add(object);
+
     }
 
 }

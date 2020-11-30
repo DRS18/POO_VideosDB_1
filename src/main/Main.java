@@ -179,6 +179,18 @@ public final class Main {
                                 input.getCommands().get(i).getNumber(), years, genres,
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
                     }
+                } else if (input.getCommands().get(i).getCriteria().equals("awards")) {
+//                    System.out.println(input.getCommands().get(i).toString());
+//                    if(awards!=null)System.out.println(awards.toString());
+                    my_db.queryAwardsActors(input.getCommands().get(i).getActionId(),
+                            input.getCommands().get(i).getNumber(), years, genres,
+                            words, awards, input.getCommands().get(i).getSortType(), arrayResult);
+                } else if (input.getCommands().get(i).getCriteria().equals("filter_description")) {
+//                    System.out.println(input.getCommands().get(i).toString());
+                    my_db.queryDescriptionActors(input.getCommands().get(i).getActionId(),
+                            input.getCommands().get(i).getNumber(), years, genres,
+                            words, awards, input.getCommands().get(i).getSortType(), arrayResult);
+
                 }
             }
         }
