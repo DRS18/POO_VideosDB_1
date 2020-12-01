@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class MultipleComparators {
-    public final static class CompareByTitle implements Comparator<Show> {
+    public final static class CompareShowByTitle implements Comparator<Show> {
         public int compare(final Show a, final Show b) {
             return a.getTitle().compareTo(b.getTitle());
         }

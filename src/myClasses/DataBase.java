@@ -1219,7 +1219,7 @@ public class DataBase {
                     }
                 }
                 if (ok == -1) {
-                    System.out.println("L am schimbat pe ok");
+//                    System.out.println("L am schimbat pe ok");
                     arrayResult.add(object);
                     return;
 
@@ -1228,6 +1228,61 @@ public class DataBase {
             }
         }
 
+        arrayResult.add(object);
+    }
+
+    public void SearchRecommendation(int id, String type, String username, String genre,
+                                      JSONArray arrayResult) {
+        JSONObject object = null;
+        User unknownUser = null;
+        ArrayList<Movie> FoundMovies = null;
+        ArrayList<Serial> FoundSerials = null;
+        ArrayList<Show> FoundShows = new ArrayList<>();
+        List<String> tempList = new ArrayList<>();
+        tempList.add(genre);
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                unknownUser = users.get(i);
+            }
+        }
+
+        FoundMovies = FoundMoviesByFilters(null, tempList, null, null, movies);
+        FoundSerials = FoundSerialsByFilters(null, tempList, null, null, serials);
+
+        for (int i = 0; i < FoundMovies.size(); i++) {
+//            System.out.println(FoundMovies.get(i).getTitle() + "---" + FoundMovies.get(i).getRating());
+            FoundShows.add(FoundMovies.get(i));
+        }
+        for (int i = 0; i < FoundSerials.size(); i++) {
+//            System.out.println(FoundSerials.get(i).getTitle() + "---" + FoundSerials.get(i).getRating());
+            FoundShows.add(FoundSerials.get(i));
+        }
+
+        for (int i = 0; i < FoundShows.size(); i++) {
+            if (unknownUser.getHistory().containsKey(FoundShows.get(i).getTitle())) {
+                FoundShows.remove(FoundShows.get(i));
+            }
+        }
+
+        FoundShows.sort(new MultipleComparators.CompareShoeByGeneralRating());
+        Collections.reverse(FoundShows);
+        FoundShows.sort(new MultipleComparators.CompareShowByTitle());
+
+        if (FoundShows.size() == 0) {
+            String message = "SearchRecommendation cannot be applied!";
+            object = writeObject(id, null, message);
+        } else {
+            String message = "SearchRecommendation result: [";
+            for (int i = 0; i < FoundShows.size(); i++) {
+                message = message + FoundShows.get(i).getTitle();
+                if (i < FoundShows.size() - 1) {
+                    message = message + ", ";
+                }
+            }
+            message = message + "]";
+            object = writeObject(id, null, message);
+        }
         arrayResult.add(object);
     }
 

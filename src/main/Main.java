@@ -208,6 +208,11 @@ public final class Main {
                     my_db.popularRecommendation(input.getCommands().get(i).getActionId(),
                             input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
                             arrayResult);
+                } else if (input.getCommands().get(i).getType().equals("search")) {
+//                    System.out.println(input.getCommands().get(i).toString());
+                    my_db.SearchRecommendation(input.getCommands().get(i).getActionId(),
+                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
+                            input.getCommands().get(i).getGenre() ,arrayResult);
                 }
 
             }
