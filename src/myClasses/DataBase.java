@@ -984,24 +984,19 @@ public class DataBase {
 //            System.out.println("SIZEOF actors " + actors.size());
             for (int j = 0; j < words.size(); j++) {
 //                System.out.println("Look for " + words.get(j) + " in " + actors.get(i).getName());
-//                String regex = "\\B";
-//                regex += words.get(j);
-//                regex += "|";
-//                regex += words.get(j);
-//                regex += "\\B";
-//                Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-//                Matcher matcher = pattern.matcher(actors.get(i).getCareerDescription());
-//                ok = -1;
-//                while (matcher.find()) {
-//                    System.out.println(matcher.group());
-//                    ok = 0;
-//                    break;
-//                }
-//                if (ok == 0) break;
-                if (actors.get(i).getCareerDescription().indexOf(words.get(j)) == -1) {
+
+                Pattern pattern = Pattern.compile(words.get(j), Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(actors.get(i).getCareerDescription());
+                boolean matchFound = matcher.find();
+                if (!matchFound) {
                     ok = -1;
                     break;
                 }
+
+//                if (actors.get(i).getCareerDescription().indexOf(words.get(j)) == -1) {
+//                    ok = -1;
+//                    break;
+//                }
             }
             if (ok != -1) {
                 result.add(actors.get(i));
