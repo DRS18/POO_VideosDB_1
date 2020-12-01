@@ -65,5 +65,11 @@ public final class MultipleComparators {
         }
     }
 
+    public final static class CompareUserByUsername implements Comparator<User> {
+        public int compare (final User a, final User b) {
+            return a.getUsername().compareTo(b.getUsername());
+        }
+    }
+
 
 }

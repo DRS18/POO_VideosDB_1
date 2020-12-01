@@ -316,26 +316,29 @@ public class DataBase {
         ArrayList<Movie> result = new ArrayList<>();
 
         int ok = 0;
+        int yearsCheck = 0;
         for (int i = 0; i < shows.size(); i++) {
             // Filter movies by year
             ok = -1;
+            yearsCheck = -1;
             if (years != null) {
                 for (int j = 0; j < years.size(); j++) {
+//                    System.out.println("Cautam " + years.get(j) + " in " + shows.get(i).getTitle());
                     if (years.get(j) != null && shows.get(i).getYear() == parseInt(years.get(j))) {
-                        ok = 0;
+//                        System.out.println("L-am gasit");
+                        yearsCheck = 0;
                         break;
                     }
                 }
             } else {
-                ok = 0;
+                yearsCheck = 0;
             }
 
-            if (ok == -1) continue;
-
-            ok = -1;
+            if (yearsCheck == -1) continue;
 
             // Filter movies by genres
-            if (genres != null) {
+            if (genres.size() > 0 && genres.get(0) != null) {
+//                System.out.println(genres.toString());
                 for (int j = 0; j < genres.size(); j++) {
                     if (genres.get(j) != null && shows.get(i).getGenres().contains(genres.get(j))) {
                         ok = 0;
@@ -346,10 +349,11 @@ public class DataBase {
             } else {
                 ok = 0;
             }
+//            System.out.println("ok = " + ok + " years_check = " + yearsCheck);
+            if (ok == -1 && yearsCheck == -1) continue;
 
-            if (ok == -1) continue;
-
-            if (ok == 0) {
+            if (ok == 0 && yearsCheck == 0) {
+//                System.out.println("adaugam " + shows.get(i));
                 result.add(shows.get(i));
             }
         }
@@ -366,7 +370,9 @@ public class DataBase {
         JSONObject object = null;
 
         FoundMovies = FoundMoviesByFilters(years, genres, words, awards, movies);
-
+//        System.out.println(FoundMovies.size());
+        for (int i = 0; i < FoundMovies.size(); i++) {
+        }
         // Now we have movies by filters
         for (int i = 0; i < FoundMovies.size(); i++) {
             if (indexing.containsKey(howManyFavourites(FoundMovies.get(i))) &&
@@ -798,10 +804,18 @@ public class DataBase {
             if (users.get(i).getNumberOfRatings() >= 1) {
                 FoundUsers.add(users.get(i));
             }
-
         }
 
+//        for (int i = 0; i < FoundUsers.size(); i++) {
+//            System.out.println(FoundUsers.get(i).getUsername() + " --- " + FoundUsers.get(i).getNumberOfRatings());
+//        }
+//        System.out.println("SORTED");
+        FoundUsers.sort(new MultipleComparators.CompareUserByUsername());
         FoundUsers.sort(new MultipleComparators.CompareUserByRatings());
+//        for (int i = 0; i < FoundUsers.size(); i++) {
+//            System.out.println(FoundUsers.get(i).getUsername() + " --- " + FoundUsers.get(i).getNumberOfRatings());
+//        }
+
         if (sortType.equals("desc")) {
             Collections.reverse(FoundUsers);
         }
@@ -1337,7 +1351,7 @@ public class DataBase {
         }
 
         if (unknownUser.getSubscriptionType().equals("BASIC")) {
-            String message = "PopularRecommendation cannot be applied!";
+            String message = "FavoriteRecommendation cannot be applied!";
             object = writeObject(id, null, message);
         } else {
             for (int i = 0; i < movies.size(); i++) {
@@ -1357,7 +1371,7 @@ public class DataBase {
             FoundShows.sort(new MultipleComparators.CompareShowByTitle());
             FoundShows.sort(new MultipleComparators.CompareShowByFavourites());
             if (FoundShows.size() == 0) {
-                String message ="PopularRecommendation cannot be applied!";
+                String message ="FavoriteRecommendation cannot be applied!";
                 object = writeObject(id, null, message);
             } else {
 //                System.out.println(FoundShows.get(0).getTitle());

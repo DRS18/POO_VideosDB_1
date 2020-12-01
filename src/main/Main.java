@@ -117,7 +117,7 @@ public final class Main {
                 if (input.getCommands().get(i).getCriteria().equals("favorite")) {
 
                     if (input.getCommands().get(i).getObjectType().equals("movies")) {
-//                        System.out.println(input.getCommands().get(i).toString());
+                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryFavouriteMovies(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
                                 null, null, input.getCommands().get(i).getSortType(), arrayResult);
