@@ -10,6 +10,17 @@ public abstract class Show {
     private ArrayList<String> cast;
     private ArrayList<String> genres;
     private int NumberOfViews = 0;
+    private double ShowGeneralRating;
+
+    public double getShowGeneralRating() {
+        return ShowGeneralRating;
+    }
+
+    public void setShowGeneralRating(double showGeneralRating) {
+        ShowGeneralRating = showGeneralRating;
+    }
+
+
 
     public void setNumberOfViews(int numberOfViews) {
         NumberOfViews = numberOfViews;

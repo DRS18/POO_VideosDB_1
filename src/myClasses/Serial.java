@@ -30,6 +30,7 @@ public class Serial extends Show{
             rating = 0;
         }
 
+        super.setShowGeneralRating(rating);
         return rating;
     }
 

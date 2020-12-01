@@ -35,6 +35,12 @@ public final class MultipleComparators {
         }
     }
 
+    public final static class CompareShoeByGeneralRating implements Comparator<Show> {
+        public int compare (final Show a, final Show b) {
+            return Double.compare(a.getShowGeneralRating(), b.getShowGeneralRating());
+        }
+    }
+
     public final static class CompareMovieByRating implements Comparator<Movie> {
         public int compare (final Movie a, final Movie b) {
             return Double.compare(a.getRating(), b.getRating());

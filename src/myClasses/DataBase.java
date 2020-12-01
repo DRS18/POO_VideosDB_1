@@ -3,6 +3,7 @@ package myClasses;
 import actor.ActorsAwards;
 import com.sun.source.tree.Tree;
 import common.Constants;
+import entertainment.Genre;
 import fileio.Input;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -1053,6 +1054,168 @@ public class DataBase {
             String message = "StandardRecommendation cannot be applied!";
             object = writeObject(id, null, message);
         }
+
+        arrayResult.add(object);
+    }
+
+    public ArrayList<Show> getAllUnseenShows(User user) {
+        ArrayList<Show> unseenShows = new ArrayList<>();
+
+        for (int i = 0; i < movies.size(); i++) {
+            if (user.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+                unseenShows.add(movies.get(i));
+            }
+        }
+        for (int i = 0; i < serials.size(); i++) {
+            if (user.getHistory().containsKey(serials.get(i).getTitle()) == false) {
+                unseenShows.add(serials.get(i));
+            }
+        }
+
+        return unseenShows;
+    }
+
+    public void bestUnseenRecommendation(int id, String type, String username,
+                                         JSONArray arrayResult) {
+        JSONObject object = null;
+        Show uknownShow = null;
+        User unknownUser = null;
+        ArrayList<Show> FoundShows = null;
+        int ok = -1;
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                unknownUser = users.get(i);
+            }
+        }
+
+        FoundShows = getAllUnseenShows(unknownUser);
+
+        FoundShows.sort(new MultipleComparators.CompareShoeByGeneralRating());
+
+        if (FoundShows.size() > 0) {
+            String message = "BestRatedUnseenRecommendation result: " + FoundShows.get(0).getTitle();
+            object = writeObject(id, null, message);
+        } else {
+            String message = "BestRatedUnseenRecommendation cannot be applied!";
+            object = writeObject(id, null, message);
+        }
+
+        arrayResult.add(object);
+    }
+
+
+    public void popularRecommendation(int id, String type, String username,
+                                      JSONArray arrayResult) {
+        JSONObject object = null;
+        User unknownUser = null;
+        Map<String, Integer> popularGenres = new HashMap<>();
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                unknownUser = users.get(i);
+            }
+        }
+
+        if (unknownUser.getSubscriptionType().equals("BASIC")) {
+            String message = "PopularRecommendation cannot be applied!";
+            object = writeObject(id, null, message);
+        } else {
+            for (int i = 0; i < movies.size(); i++) {
+                for (int j = 0; j < movies.get(i).getGenres().size(); j++) {
+                    if (popularGenres.containsKey(movies.get(i).getGenres().get(j)) == false) {
+                        popularGenres.put(movies.get(i).getGenres().get(j),
+                                getNumberOfViews(movies.get(i)));
+                    } else {
+                        popularGenres.put(movies.get(i).getGenres().get(j),
+                                popularGenres.get(movies.get(i).getGenres().get(j)) +
+                                        getNumberOfViews(movies.get(i)));
+                    }
+                }
+            }
+            for (int i = 0; i < serials.size(); i++) {
+                for (int j = 0; j < movies.get(i).getGenres().size(); j++) {
+                    if (popularGenres.containsKey(movies.get(i).getGenres().get(j)) == false) {
+                        popularGenres.put(movies.get(i).getGenres().get(j),
+                                getNumberOfViews(movies.get(i)));
+                    } else {
+                        popularGenres.put(movies.get(i).getGenres().get(j),
+                                popularGenres.get(movies.get(i).getGenres().get(j)) +
+                                        getNumberOfViews(movies.get(i)));
+                    }
+                }
+            }
+
+            System.out.println(popularGenres.toString());
+
+            int ok = -1;
+            Integer max = 0;
+            String toSearch = null;
+            ArrayList<Movie> tempMovies = new ArrayList<>();
+            ArrayList<Serial> tempSerials = new ArrayList<>();
+            List<String> tempGenres= new ArrayList<>();
+
+            while (ok < 1) {
+                max = 0;
+                tempMovies.clear();
+                tempSerials.clear();
+                tempGenres.clear();
+                toSearch = null;
+                Iterator it = popularGenres.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry)it.next();
+                    if ((Integer)pair.getValue() > max) {
+                        max = (Integer) pair.getValue();
+                        toSearch = (String) pair.getKey();
+                    }
+//                    it.remove();
+                }
+//                ok++;
+                System.out.println("We Want to search " + toSearch + " " + max);
+                popularGenres.remove(toSearch);
+
+                tempGenres.add(toSearch);
+
+                tempMovies = FoundMoviesByFilters(null, tempGenres, null, null, movies);
+                tempSerials= FoundSerialsByFilters(null, tempGenres, null, null ,serials);
+
+
+                for (int i = 0; i < tempMovies.size(); i++) {
+
+                    if (unknownUser.getHistory().containsKey(tempMovies.get(i).getTitle()) == false) {
+                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut " +
+                                tempMovies.get(i).getTitle());
+                        String message = "PopularRecommendation result: " +
+                                tempMovies.get(i).getTitle();
+                        object = writeObject(id, null, message);
+                        ok = 0;
+                        break;
+                    }
+                }
+
+                if (ok == 0) break;
+                for (int i = 0; i < tempSerials.size(); i++) {
+
+                    if (unknownUser.getHistory().containsKey(tempSerials.get(i).getTitle()) == false) {
+                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut!!!! " +
+                                tempSerials.get(i).getTitle());
+                        String message = "PopularRecommendation result: " +
+                                tempMovies.get(i).getTitle();
+
+                        object = writeObject(id, null, message);
+                        ok = 0;
+                        break;
+                    }
+                }
+                if (ok  == 0) {
+                    break;
+                }
+
+            }
+
+
+        }
+
 
         arrayResult.add(object);
     }
