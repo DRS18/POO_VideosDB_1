@@ -394,7 +394,6 @@ public class DataBase {
 
     public void queryFavouriteShows(int id, int number, List<String> years, List<String> genres, JSONArray arrayResult) {
         ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, serials);
-
         Map<Integer, ArrayList<String>> indexing = new HashMap<>();
         JSONObject object;
 
@@ -812,7 +811,6 @@ public class DataBase {
             if (ok != -1) {
                 result.add(actors.get(i));
             }
-
         }
 
         return result;

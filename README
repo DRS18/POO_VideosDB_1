@@ -1,38 +1,132 @@
-Object Oriented Programming Course
-Homework - VideosDB
+// Copyright Paune Lucian Dragos 323CA
 
-November 2020
+Acest fisier contine modul de gandire si implementare al Temei 2 POO VideoDB
 
-# Info
-https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema
 
-# About the code
+Am inceput tema in primul rand prin a-mi consulta colegii cu privire la
+utilizare scheletului si cam care ar fi structura temei si ce trebuie in
+special facut la aceasta tema.
 
-We provide the input tests, the logic that parses them and the checker that runs them.
 
-* test_db - contains the tests in JSON format
-* src
-   * checker - the checker's sources including the checkstyle necessary files, not to be modified
-   * fileio - classes for parsing the input files, not to be modified
-   * common, utils
-        * contain utility classes with constants and static methods
-        * you can add your own functionality in the existing classes or add new classes as well
-   * actor
-        * contains an enum for the types of awards an actor can have - do not modify it
-        * you can add here your actor related classes
-   * entertainment
-        * contains an enum for the supported video genres - do not modify it
-        * class for representing a Season of a tv show - do not modify it
-        * you can add here your entertainment related classes
+Mi-am format propria baza de date, am pornit facandu-mi pachetul myClasses
+si dupa modelul celor din fileio mi-am contruit propriile clase cu mici
+adaugari unde am simtit ca imi usureaza munca.
 
-We encourage you to organize your implementation in packages based on the functionality their classes offer. Try to keep
-your code modular, readable and documented.
+Vreau sa imi cer scuze pentru modeul oarecum mai "neortodox" si neorganizat
+de implementare al temei, chiar nu am mai avut timp de aranjare codingstyle
+si oarecum o reorganizare a clase DataBase pentru ca a ajuns fara sa imi dau
+seama la proportii enorme, o zi in plus ar fi fost de ajuns din cauza
+suprapunerii cu celelalte teme.
 
-# Testing
 
-The Main class runs the checker on your implementation. Add the entry point to your implementation in it.
+Ordinea de rezovare a Taskului a fost urmatoarea:
+- Commands
+- Queries (videos, users, actors)
+- Recommendations
+Aceasta structura am urmat-o in DataBase si am respectat aceasta ordine.
 
-Run Main to test your implementation from the IDE or from command line.
+Inaine de toate mi-am format DataBase-ul meu propriu zis prin metodele
+put(Actors/Movies/Serials/Users).
 
-Run the main method from Test class with the name of the input file from the command line and the result will be written
-to the out.txt file. Thus, you can compare this result with ref.
+Eu prin Show ma refer la clasa abstracta care extinde Movie si Serial iar
+serialele le-am numit Serials.
+
+
+In commandFavorite incep prin gasirea useru-lui username dat ca parametru
+si tratez fiecare caz in parte in functie de "separatorul" ok pe care il
+folosesc.
+La finalul fiecarui task cred ca nu mai are rost sa zic ca adaug obiectul la
+Array-ul rezultant.
+
+In commandView caut user-ul si vad daca acesta a vazut sau nu show-ul
+respectiv, totodata incrementez numarul de vizualizari per film.
+
+In commandRating am inglobat atat functia pentru seriale cat si pentru filme
+ceea ce nu pot sa zic ca a fost chiar o idee foarte strlucita.
+Initial ma asigur ca user-ul a vazut filmul/serialul respectiv.
+Mi-am tinut in Movie/Season o lista de usersRecord pentru a fi sigur ca user-ul
+nu mai da rating si a doua oara la filmul/serialul respectiv.
+
+Mi-am facut o functie ajutatoare howManyFavourites pentru a obtine numarul
+de "nominalizari" la favorite a unui film dat ca parametru.
+
+Prin functia FoundMoviesByFilters imi creez si returnez o lista de filme
+pe baza filtrelor date ca parametru.
+
+Am inceput cu queries prin queryFavouriteMovies, prima oara imi formez lista
+de filme pe baza filtrelor iar mai apoi aplic sortari pe care le-am facut
+separat aferent fiecarei nevoi in clasa MultipleComparators (bine ca nu le-am
+facut si pe astea in DataBase).
+La final formez string-ul conform datelor din fisierele .ref .
+
+Mi-am creat mai apoi si o metoda FoundSerialsByFilters care imi formeaza o
+lista de seriale pe baza unor filtre date ca parametru.
+
+Functia howManyFavouritesSerials este similara cu howManyFavouritesMovies
+numai ca pentru seriale.
+
+In queryFavouriteShows mi-am format un map ca sa am o indexare sa zic asa
+intre
+numarul in care acesta apare in Favourites si numele show-ului, aici daca nu
+ma
+insel nu descoperisem treaba cu comparatorii si din acest motiv cred ca m-am
+cam complicat putin dar nu am mai schimbat functia.
+
+In queryLongestMovie formez in mod clasic array ul de filme cu ajutorul
+functiei ajutatoare iar mai apoi ma folosesc de sfintii comparatori pentru
+a putea sorta intre duratele pe care acestea le au.
+
+In queryLongestSerial de-asemenea nu am mai modificat modul de implementare
+dupa ce am descoperit comparatorii si am mers pana la capat cu Map-ul
+ajutator.
+
+Nu stiu exact ce sa mai explic pentru urmatoarele functii pentru ca merg in
+aceeasi idee a formarii array-ului pe baza filtrelor si aplicarii
+comparatorilor.
+
+Mi-am format functia ajutatoare actualizeActorRatingAverage pentru calculul
+acela specific al rating-ului unui actor pe baza filmelor in care a jucat.
+Ma folosesc de aceasta functie in queryAverageActors iar mai apoi aplic
+comparatorii in functie de filtrele cerute.
+
+Am creat o funcite ajutatoare care imi formeaza un Array<Actor>,
+FoundActorsByAwards care imi cauta actorii respectivi in functie de premiile
+obtinute in cariera lor mai mult sau mai putin glorioasa.
+
+Similar FoundActorsByWords, inca nu imi explic de ce, ma refer aici la unele
+teste lungi, as vrea sa fac distinctie intr-o descriere litera mica de litera
+mare, dupa ce am luat tot testul la rand de mana mi-am dat seama de acest
+lucru minunat.
+
+standardRecommendation de asemenea merge pe calapodul clasic reiesit din
+enunt si fisierele .ref, caut userul pe baza usernam-ului, iau filmele
+din baza de date la rand si vad care a fost primul nevazut ca sa il recomand.
+
+Pentru BestUnseen mi-am format functia ajutatoare getAllUnseenShows care
+imi intoarce o lista de shows (movie/serials) nevazute. Mai apoi in functia
+bestUnseen le sortez conform ratingului cum mi se cere in enunt si il ofer
+ca si recomandare.
+
+PopularRecommendation cred ca mi s-a parut oarecum printre cele mai grele, sau
+poate cea mai grea.
+Prima oara gasesc user ul pe baza usernam-ului iar mai apoi mi-am facut un
+hashmap in care mapez genurile si vizualizarile pe fiecare gen iar mai apoi
+parcurc cu un while genurile pana gasesc un film pe care respectivul user
+nu l-a vazut, la fiecare pas mai intai gasesc maximul din hashmap ca sa stiu
+ce gen ar trebui sa caut iar apoi imi gasesc filme si seriale pe baza
+respectivului gen.
+
+La SearchRecommendation imi formez mai intai cate o lista de movie si seriale
+pe baza genului iar apoi le "vars" pe toate intr-o lista de show-uri pentru
+a le putea compara pe toate, si seriale si filme.
+
+
+
+
+
+
+
+
+
+
+
