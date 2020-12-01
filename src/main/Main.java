@@ -82,9 +82,7 @@ public final class Main {
         my_db.putMovies(input);
         my_db.putSerials(input);
         my_db.putUsers(input);
-//        my_db.putActions(input);
 
-//        my_db.iterateThroughActions(arrayResult);
         for (int i = 0; i < input.getCommands().size(); i++) {
             if (input.getCommands().get(i).getActionType().equals("command") &&
                     input.getCommands().get(i).getType().equals("favorite")){
@@ -126,19 +124,19 @@ public final class Main {
 
                         my_db.queryFavouriteShows(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                arrayResult);
                     }
 
                 } else if (input.getCommands().get(i).getCriteria().equals("longest")) {
                     if (input.getCommands().get(i).getObjectType().equals("movies")) {
-                        System.out.println(input.getCommands().get(i).toString());
+//                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryLongestMovie(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getSortType(), arrayResult);
                     } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
                         my_db.queryLongestSerial(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                arrayResult);
                     }
 
                 } else if (input.getCommands().get(i).getCriteria().equals("most_viewed")) {
@@ -146,89 +144,79 @@ public final class Main {
 //                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryMostViewedMovie(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getSortType(), arrayResult);
 
                     } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
                         my_db.queryMostViewedSerial(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getSortType(), arrayResult);
                     }
                 } else if (input.getCommands().get(i).getCriteria().equals("ratings")) {
                     if (input.getCommands().get(i).getObjectType().equals("movies")) {
 //                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryRatingMovie(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getSortType(), arrayResult);
                     } else if (input.getCommands().get(i).getObjectType().equals("shows")) {
 //                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryRatingSerial(input.getCommands().get(i).getActionId(),
                                 input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getSortType(), arrayResult);
                     }
                 } else if (input.getCommands().get(i).getCriteria().equals("num_ratings")) {
                     if (input.getCommands().get(i).getObjectType().equals("users")) {
 //                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryRatingUsers(input.getCommands().get(i).getActionId(),
-                                input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getNumber(),
+                                input.getCommands().get(i).getSortType(), arrayResult);
                     }
                 } else if (input.getCommands().get(i).getCriteria().equals("average")) {
                     if (input.getCommands().get(i).getObjectType().equals("actors")) {
 //                        System.out.println(input.getCommands().get(i).toString());
                         my_db.queryAverageActors(input.getCommands().get(i).getActionId(),
-                                input.getCommands().get(i).getNumber(), years, genres,
-                                null, null, input.getCommands().get(i).getSortType(), arrayResult);
+                                input.getCommands().get(i).getNumber(),
+                                input.getCommands().get(i).getSortType(), arrayResult);
                     }
                 } else if (input.getCommands().get(i).getCriteria().equals("awards")) {
 //                    System.out.println(input.getCommands().get(i).toString());
-//                    if(awards!=null)System.out.println(awards.toString());
                     my_db.queryAwardsActors(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getNumber(), years, genres,
-                            words, awards, input.getCommands().get(i).getSortType(), arrayResult);
+                            input.getCommands().get(i).getNumber(), awards,
+                            input.getCommands().get(i).getSortType(), arrayResult);
                 } else if (input.getCommands().get(i).getCriteria().equals("filter_description")) {
 //                    System.out.println(input.getCommands().get(i).toString());
                     my_db.queryDescriptionActors(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getNumber(), years, genres,
-                            words, awards, input.getCommands().get(i).getSortType(), arrayResult);
+                            input.getCommands().get(i).getNumber(), words,
+                            input.getCommands().get(i).getSortType(), arrayResult);
 
                 }
             } else if (input.getCommands().get(i).getActionType().equals("recommendation")) {
                 if (input.getCommands().get(i).getType().equals("standard")) {
 //                    System.out.println(input.getCommands().get(i).toString());
                     my_db.stardardRecommendation(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
-                            arrayResult);
+                            input.getCommands().get(i).getUsername(), arrayResult);
                 } else if (input.getCommands().get(i).getType().equals("best_unseen")) {
 //                    System.out.println(input.getCommands().get(i).toString());
                     my_db.bestUnseenRecommendation(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
-                            arrayResult);
+                            input.getCommands().get(i).getUsername(), arrayResult);
                 } else if (input.getCommands().get(i).getType().equals("popular")) {
 //                    System.out.println(input.getCommands().get(i).toString());
                     my_db.popularRecommendation(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
-                            arrayResult);
+                            input.getCommands().get(i).getUsername(), arrayResult);
                 } else if (input.getCommands().get(i).getType().equals("search")) {
 //                    System.out.println(input.getCommands().get(i).toString());
                     my_db.SearchRecommendation(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
-                            input.getCommands().get(i).getGenre() ,arrayResult);
+                            input.getCommands().get(i).getUsername(),
+                            input.getCommands().get(i).getGenre(), arrayResult);
                 } else if (input.getCommands().get(i).getType().equals("favorite")) {
 //                    System.out.println(input.getCommands().get(i).toString());
                     my_db.FavoriteRecommendation(input.getCommands().get(i).getActionId(),
-                            input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
-                            arrayResult);
+                            input.getCommands().get(i).getUsername(), arrayResult);
                 }
 
             }
         }
 
-
-        System.out.println(arrayResult.toJSONString());
-
-
-
-//        System.out.println(input.getCommands());
+//        System.out.println(arrayResult.toJSONString());
 
         fileWriter.closeJSON(arrayResult);
     }

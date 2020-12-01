@@ -1,9 +1,7 @@
 package myClasses;
 
 import actor.ActorsAwards;
-import com.sun.source.tree.Tree;
 import common.Constants;
-import entertainment.Genre;
 import fileio.Input;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,24 +13,13 @@ import java.util.regex.Pattern;
 import static java.lang.Integer.parseInt;
 
 public class DataBase {
-    private ArrayList<Actor>  actors  = new ArrayList<>();
-    private ArrayList<Movie>  movies  = new ArrayList<>();
-    private ArrayList<Serial> serials = new ArrayList<>();
-    private ArrayList<User>   users   = new ArrayList<>();
+    private final ArrayList<Actor>  actors  = new ArrayList<>();
+    private final ArrayList<Movie>  movies  = new ArrayList<>();
+    private final ArrayList<Serial> serials = new ArrayList<>();
+    private final ArrayList<User>   users   = new ArrayList<>();
     public ArrayList<Action> actions = new ArrayList<>();
 
-    private Map<Integer, List<String>> gogu;
-
-    private static DataBase instance = null;
-
     public DataBase(){}
-
-    public static DataBase getInstance() {
-        if (instance == null) {
-            instance = new DataBase();
-        }
-        return instance;
-    }
 
     public void putActors(Input input) {
         input.getActors()
@@ -255,7 +242,7 @@ public class DataBase {
             }
         } else {
             // it's show(time)
-            ok = -1;
+//            ok = -1;
             for (int i = 0; i < serials.size(); i++) {
                 if (serials.get(i).getTitle().equals(title)) {
                     if (serials.get(i).getSeasons().get(season - 1).getRatings().size() == 0) {
@@ -310,13 +297,11 @@ public class DataBase {
         return n;
     }
 
-    public ArrayList<Movie> FoundMoviesByFilters (List<String> years, List<String> genres,
-                                                List<String> words, List<String> awards,
-                                                ArrayList<Movie> shows) {
+    public ArrayList<Movie> FoundMoviesByFilters (List<String> years, List<String> genres, ArrayList<Movie> shows) {
         ArrayList<Movie> result = new ArrayList<>();
 
-        int ok = 0;
-        int yearsCheck = 0;
+        int ok;
+        int yearsCheck;
         for (int i = 0; i < shows.size(); i++) {
             // Filter movies by year
             ok = -1;
@@ -350,9 +335,9 @@ public class DataBase {
                 ok = 0;
             }
 //            System.out.println("ok = " + ok + " years_check = " + yearsCheck);
-            if (ok == -1 && yearsCheck == -1) continue;
+//            if (ok == -1 && yearsCheck == -1) continue;
 
-            if (ok == 0 && yearsCheck == 0) {
+            if (ok == 0) {
 //                System.out.println("adaugam " + shows.get(i));
                 result.add(shows.get(i));
             }
@@ -365,11 +350,11 @@ public class DataBase {
                                       List<String> words, List<String> awards, String sortType,
                                       JSONArray arrayResult) {
 
-        ArrayList<Movie> FoundMovies = null;
+        ArrayList<Movie> FoundMovies;
 //        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
-        JSONObject object = null;
+        JSONObject object;
 
-        FoundMovies = FoundMoviesByFilters(years, genres, words, awards, movies);
+        FoundMovies = FoundMoviesByFilters(years, genres, movies);
 //        System.out.println(FoundMovies.size());
 
 //        System.out.println("--------------------------------------------------");
@@ -421,14 +406,14 @@ public class DataBase {
 //            String message = "Query result: []";
 //            object = writeObject(id, null, message);
 //        }
-
+        StringBuilder sb = new StringBuilder();
         if (FoundMovies.size() > 0) {
             String message = "Query result: [";
             for (int i = 0; i < FoundMovies.size(); i++) {
                 if (i == number) {
                     break;
                 }
-                message = message + FoundMovies.get(i).getTitle();
+                message += FoundMovies.get(i).getTitle();
                 if (i < FoundMovies.size() - 1 && i < number - 1) {
                     message = message + ", ";
                 }
@@ -447,12 +432,10 @@ public class DataBase {
         arrayResult.add(object);
     }
 
-    public ArrayList<Serial> FoundSerialsByFilters (List<String> years, List<String> genres,
-                                                  List<String> words, List<String> awards,
-                                                  ArrayList<Serial> shows) {
+    public ArrayList<Serial> FoundSerialsByFilters (List<String> years, List<String> genres, ArrayList<Serial> shows) {
         ArrayList<Serial> result = new ArrayList<>();
 
-        int ok = 0;
+        int ok;
         for (int i = 0; i < shows.size(); i++) {
             // Filter movies by year
             ok = -1;
@@ -484,11 +467,11 @@ public class DataBase {
                 ok = 0;
             }
 
-            if (ok == -1) continue;
-
-            if (ok == 0) {
-                result.add(shows.get(i));
+            if (ok == -1) {
+                continue;
             }
+
+            result.add(shows.get(i));
         }
 
         return result;
@@ -507,13 +490,11 @@ public class DataBase {
         return n;
     }
 
-    public void queryFavouriteShows(int id, int number, List<String> years, List<String> genres,
-                                    List<String> words, List<String> awards, String sortType,
-                                    JSONArray arrayResult) {
-        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, words, awards, serials);
+    public void queryFavouriteShows(int id, int number, List<String> years, List<String> genres, JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, serials);
 
         Map<Integer, ArrayList<String>> indexing = new HashMap<>();
-        JSONObject object = null;
+        JSONObject object;
 
         for (int i = 0; i < FoundSerials.size(); i++) {
             if (indexing.containsKey(howManyFavouritesSerials(FoundSerials.get(i))) &&
@@ -522,7 +503,7 @@ public class DataBase {
                 temp.add(temp.size(), FoundSerials.get(i).getTitle());
             } else if (howManyFavouritesSerials(FoundSerials.get(i)) > 0){
                 ArrayList<String> list = new ArrayList<>();
-                list.add(list.size(), FoundSerials.get(i).getTitle());
+                list.add(FoundSerials.get(i).getTitle());
                 indexing.put(howManyFavouritesSerials(FoundSerials.get(i)), list);
             }
 //            System.out.println(howManyFavouritesSerials(FoundSerials.get(i)));
@@ -533,7 +514,7 @@ public class DataBase {
 
         if (indexing.size() > 0){
             String message = "Query result: ";
-            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<>(indexing);
             int ok = 0;
             for (Integer temp : sortedMap.keySet()) {
                 ok++;
@@ -551,11 +532,9 @@ public class DataBase {
     }
 
     public void queryLongestMovie(int id, int number, List<String> years, List<String> genres,
-                                  List<String> words, List<String> awards, String sortType,
-                                  JSONArray arrayResult) {
-        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
-        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
-        JSONObject object = null;
+                                 String sortType, JSONArray arrayResult) {
+        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, movies);
+        JSONObject object;
 
 //        for (int i = 0; i < FoundMovies.size(); i++) {
 //            System.out.println(FoundMovies.get(i).getTitle());
@@ -636,12 +615,11 @@ public class DataBase {
     }
 
     public void queryLongestSerial(int id, int number, List<String> years, List<String> genres,
-                                  List<String> words, List<String> awards, String sortType,
                                   JSONArray arrayResult) {
-        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, words, awards, serials);
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, serials);
 
         Map<Integer, ArrayList<String>> indexing = new HashMap<>();
-        JSONObject object = null;
+        JSONObject object;
 
         for (int i = 0; i < FoundSerials.size(); i++) {
             if (indexing.containsKey(getSerialDuration(FoundSerials.get(i)))) {
@@ -649,14 +627,14 @@ public class DataBase {
                 temp.add(temp.size(), FoundSerials.get(i).getTitle());
             } else {
                 ArrayList<String> list = new ArrayList<>();
-                list.add(list.size(), FoundSerials.get(i).getTitle());
+                list.add(FoundSerials.get(i).getTitle());
                 indexing.put(getSerialDuration(FoundSerials.get(i)), list);
             }
         }
 
         if (indexing.size() > 0){
             String message = "Query result: [";
-            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<>(indexing);
             int ok = 0;
             for (Integer temp : sortedMap.keySet()) {
                 ok++;
@@ -696,11 +674,10 @@ public class DataBase {
     }
 
     public void queryMostViewedMovie(int id, int number, List<String> years, List<String> genres,
-                                     List<String> words, List<String> awards, String sortType,
-                                     JSONArray arrayResult) {
-        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
+                                     String sortType, JSONArray arrayResult) {
+        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, movies);
 //        System.out.println("FodMovies size = " + FoundMovies.size());
-        JSONObject object = null;
+        JSONObject object;
 
 
         for (int i = 0 ;i < FoundMovies.size(); i++) {
@@ -740,10 +717,9 @@ public class DataBase {
     }
 
     public void queryMostViewedSerial(int id, int number, List<String> years, List<String> genres,
-                                     List<String> words, List<String> awards, String sortType,
-                                     JSONArray arrayResult) {
-        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, null, null, serials);
-        JSONObject object = null;
+                                     String sortType, JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, serials);
+        JSONObject object;
 
         for (int i = 0 ;i < FoundSerials.size(); i++) {
             if (getNumberOfViews(FoundSerials.get(i)) > 0) {
@@ -781,10 +757,9 @@ public class DataBase {
     }
 
     public void queryRatingMovie (int id, int number, List<String> years, List<String> genres,
-                                  List<String> words, List<String> awards, String sortType,
-                                  JSONArray arrayResult) {
-        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
-        JSONObject object = null;
+                                  String sortType, JSONArray arrayResult) {
+        ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, movies);
+        JSONObject object;
 
 //        for (int i = 0; i < FoundMovies.size(); i++) {
 //            System.out.print(FoundMovies.get(i).getTitle() + " - ");
@@ -823,10 +798,9 @@ public class DataBase {
     }
 
     public void queryRatingSerial(int id, int number, List<String> years, List<String> genres,
-                                  List<String> words, List<String> awards, String sortType,
-                                  JSONArray arrayResult) {
-        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, null, null, serials);
-        JSONObject object = null;
+                                  String sortType, JSONArray arrayResult) {
+        ArrayList<Serial> FoundSerials = FoundSerialsByFilters(years, genres, serials);
+        JSONObject object;
 
         for (int i = 0; i < FoundSerials.size(); i++) {
             if (FoundSerials.get(i).getRating() == 0) {
@@ -860,11 +834,9 @@ public class DataBase {
         arrayResult.add(object);
     }
 
-    public void queryRatingUsers(int id, int number, List<String> years, List<String> genres,
-                                 List<String> words, List<String> awards, String sortType,
-                                 JSONArray arrayResult) {
+    public void queryRatingUsers(int id, int number, String sortType, JSONArray arrayResult) {
         ArrayList<User> FoundUsers = new ArrayList<>();
-        JSONObject object = null;
+        JSONObject object;
 
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getNumberOfRatings() >= 1) {
@@ -889,10 +861,10 @@ public class DataBase {
         if (FoundUsers.size() > 0) {
             String message = "Query result: [";
 
-            System.out.println("------------------");
-            for (int i = 0; i < FoundUsers.size(); i++) {
-                System.out.println(FoundUsers.get(i).getUsername());
-            }
+//            System.out.println("------------------");
+//            for (int i = 0; i < FoundUsers.size(); i++) {
+//                System.out.println(FoundUsers.get(i).getUsername());
+//            }
 
 
             for (int i = 0; i < FoundUsers.size(); i++) {
@@ -934,7 +906,7 @@ public class DataBase {
 
     public double actualizeActorRatingAverage(Actor actor) {
         double sum = 0;
-        int ok = 0;
+        int ok;
         int cnt = 0;
 
         for (int i = 0; i < actor.getFilmography().size(); i++) {
@@ -954,7 +926,7 @@ public class DataBase {
             if (ok != -2) {
                 for (int j = 0; j < serials.size(); j++) {
                     if (actor.getFilmography().get(i).equals(serials.get(j).getTitle())) {
-                        ok = -1; // => it's serial
+                        // => it's serial
                         if (serials.get(j).getRating() != 0) {
                             sum += serials.get(j).getRating();
                             cnt++;
@@ -976,9 +948,7 @@ public class DataBase {
 
     }
 
-    public void queryAverageActors(int id, int number, List<String> years, List<String> genres,
-                                   List<String> words, List<String> awards, String sortType,
-                                   JSONArray arrayResult) {
+    public void queryAverageActors(int id, int number, String sortType, JSONArray arrayResult) {
         ArrayList<Actor> FoundActors = new ArrayList<>();
         JSONObject object = null;
 
@@ -1023,15 +993,13 @@ public class DataBase {
     public ArrayList<Actor> FoundActorsByAwards (List<String> awards, ArrayList<Actor> actors) {
         ArrayList<Actor> result = new ArrayList<>();
 
-        int ok = 0;
+        int ok;
         for (int i = 0; i < actors.size(); i++) {
             ok = 0;
             for (int j = 0; j < awards.size(); j++) {
 //                System.out.println("Looking for " + awards.get(j));
-                if (actors.get(i).getAwards().containsKey(ActorsAwards.valueOf(awards.get(j)))) {
+                if (!actors.get(i).getAwards().containsKey(ActorsAwards.valueOf(awards.get(j)))) {
 //                    System.out.println("CONTINEEE");
-                    continue;
-                } else {
                     ok = -1;
                     break;
                 }
@@ -1045,10 +1013,9 @@ public class DataBase {
         return result;
     }
 
-    public void queryAwardsActors(int id, int number, List<String> years, List<String> genres,
-                                  List<String> words, List<String> awards, String sortType,
+    public void queryAwardsActors(int id, int number, List<String> awards, String sortType,
                                   JSONArray arrayResult) {
-        JSONObject object = null;
+        JSONObject object;
         ArrayList<Actor> FoundActors = new ArrayList<>();
 
         if (awards != null) {
@@ -1129,12 +1096,11 @@ public class DataBase {
         return result;
     }
 
-    public void queryDescriptionActors(int id, int number, List<String> years, List<String> genres,
-                                       List<String> words, List<String> awards, String sortType,
+    public void queryDescriptionActors(int id, int number, List<String> words, String sortType,
                                        JSONArray arrayResult) {
 
-        ArrayList<Actor> FoundActors = new ArrayList<>();
-        JSONObject object = null;
+        ArrayList<Actor> FoundActors;
+        JSONObject object;
 
         FoundActors = FoundActorsByWords(words, actors);
 
@@ -1169,8 +1135,7 @@ public class DataBase {
         arrayResult.add(object);
     }
 
-    public void stardardRecommendation(int id, String type, String username,
-                                       JSONArray arrayResult) {
+    public void stardardRecommendation(int id, String username, JSONArray arrayResult) {
         JSONObject object = null;
         User unknownUser = null;
         int ok = -1;
@@ -1183,7 +1148,7 @@ public class DataBase {
         }
 
         for (int i = 0; i < movies.size(); i++) {
-            if (unknownUser.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+            if (!unknownUser.getHistory().containsKey(movies.get(i).getTitle())) {
                 String message = "StandardRecommendation result: " +
                         movies.get(i).getTitle();
                 ok = 0;
@@ -1204,12 +1169,12 @@ public class DataBase {
         ArrayList<Show> unseenShows = new ArrayList<>();
 
         for (int i = 0; i < movies.size(); i++) {
-            if (user.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+            if (!user.getHistory().containsKey(movies.get(i).getTitle())) {
                 unseenShows.add(movies.get(i));
             }
         }
         for (int i = 0; i < serials.size(); i++) {
-            if (user.getHistory().containsKey(serials.get(i).getTitle()) == false) {
+            if (!user.getHistory().containsKey(serials.get(i).getTitle())) {
                 unseenShows.add(serials.get(i));
             }
         }
@@ -1217,13 +1182,10 @@ public class DataBase {
         return unseenShows;
     }
 
-    public void bestUnseenRecommendation(int id, String type, String username,
-                                         JSONArray arrayResult) {
-        JSONObject object = null;
-        Show uknownShow = null;
+    public void bestUnseenRecommendation(int id, String username, JSONArray arrayResult) {
+        JSONObject object;
         User unknownUser = null;
-        ArrayList<Show> FoundShows = null;
-        int ok = -1;
+        ArrayList<Show> FoundShows;
 
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getUsername().equals(username)) {
@@ -1247,8 +1209,7 @@ public class DataBase {
     }
 
 
-    public void popularRecommendation(int id, String type, String username,
-                                      JSONArray arrayResult) {
+    public void popularRecommendation(int id, String username, JSONArray arrayResult) {
         JSONObject object = null;
         User unknownUser = null;
         Map<String, Integer> popularGenres = new HashMap<>();
@@ -1266,7 +1227,7 @@ public class DataBase {
         } else {
             for (int i = 0; i < movies.size(); i++) {
                 for (int j = 0; j < movies.get(i).getGenres().size(); j++) {
-                    if (popularGenres.containsKey(movies.get(i).getGenres().get(j)) == false) {
+                    if (!popularGenres.containsKey(movies.get(i).getGenres().get(j))) {
                         popularGenres.put(movies.get(i).getGenres().get(j),
                                 getNumberOfViews(movies.get(i)));
                     } else {
@@ -1278,7 +1239,7 @@ public class DataBase {
             }
             for (int i = 0; i < serials.size(); i++) {
                 for (int j = 0; j < movies.get(i).getGenres().size(); j++) {
-                    if (popularGenres.containsKey(movies.get(i).getGenres().get(j)) == false) {
+                    if (!popularGenres.containsKey(movies.get(i).getGenres().get(j))) {
                         popularGenres.put(movies.get(i).getGenres().get(j),
                                 getNumberOfViews(movies.get(i)));
                     } else {
@@ -1291,11 +1252,10 @@ public class DataBase {
 
 //            System.out.println(popularGenres.toString());
 
-            int maximumSize = popularGenres.size();
             int ok = 0;
 
-            Integer max = 0;
-            String toSearch = null;
+            Integer max;
+            String toSearch;
             ArrayList<Movie> tempMovies = new ArrayList<>();
             ArrayList<Serial> tempSerials = new ArrayList<>();
             List<String> tempGenres= new ArrayList<>();
@@ -1324,18 +1284,17 @@ public class DataBase {
 
                 tempGenres.add(toSearch);
 
-                tempMovies = FoundMoviesByFilters(null, tempGenres, null, null, movies);
-                tempSerials= FoundSerialsByFilters(null, tempGenres, null, null ,serials);
+                tempMovies = FoundMoviesByFilters(null, tempGenres, movies);
+                tempSerials= FoundSerialsByFilters(null, tempGenres, serials);
 
 //                System.out.println(tempMovies.size() + "---" + tempSerials.size());
                 for (int i = 0; i < tempMovies.size(); i++) {
 
-                    if (unknownUser.getHistory().containsKey(tempMovies.get(i).getTitle()) == false) {
+                    if (!unknownUser.getHistory().containsKey(tempMovies.get(i).getTitle())) {
 //                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut " +
 //                                tempMovies.get(i).getTitle());
                         String message = "PopularRecommendation result: " +
                                 tempMovies.get(i).getTitle();
-                        verify = 0;
                         object = writeObject(id, null, message);
                         ok = -1;
                         break;
@@ -1350,12 +1309,11 @@ public class DataBase {
 
                 for (int i = 0; i < tempSerials.size(); i++) {
 
-                    if (unknownUser.getHistory().containsKey(tempSerials.get(i).getTitle()) == false) {
+                    if (!unknownUser.getHistory().containsKey(tempSerials.get(i).getTitle())) {
 //                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut!!!! " +
 //                                tempSerials.get(i).getTitle());
                         String message = "PopularRecommendation result: " +
                                 tempSerials.get(i).getTitle();
-                        verify = 0;
 //                        System.out.println(message);
                         ok = -1;
                         object = writeObject(id, null, message);
@@ -1372,19 +1330,17 @@ public class DataBase {
                 ok ++;
             }
         }
-        if (verify == -1) {
-            String message = "PopularRecommendation cannot be applied!";
-            object = writeObject(id, null, message);
-        }
+        String message = "PopularRecommendation cannot be applied!";
+        object = writeObject(id, null, message);
+
         arrayResult.add(object);
     }
 
-    public void SearchRecommendation(int id, String type, String username, String genre,
-                                      JSONArray arrayResult) {
-        JSONObject object = null;
+    public void SearchRecommendation(int id, String username, String genre, JSONArray arrayResult) {
+        JSONObject object;
         User unknownUser = null;
-        ArrayList<Movie> FoundMovies = null;
-        ArrayList<Serial> FoundSerials = null;
+        ArrayList<Movie> FoundMovies;
+        ArrayList<Serial> FoundSerials;
         ArrayList<Show> FoundShows = new ArrayList<>();
         ArrayList<Show> tempShows = new ArrayList<>();
         List<String> tempList = new ArrayList<>();
@@ -1400,8 +1356,8 @@ public class DataBase {
             String message = "PopularRecommendation cannot be applied!";
             object = writeObject(id, null, message);
         } else {
-            FoundMovies = FoundMoviesByFilters(null, tempList, null, null, movies);
-            FoundSerials = FoundSerialsByFilters(null, tempList, null, null, serials);
+            FoundMovies = FoundMoviesByFilters(null, tempList, movies);
+            FoundSerials = FoundSerialsByFilters(null, tempList, serials);
 
             for (int i = 0; i < FoundMovies.size(); i++) {
 //            System.out.println(FoundMovies.get(i).getTitle() + "---" + FoundMovies.get(i).getRating());
@@ -1461,9 +1417,8 @@ public class DataBase {
         return n;
     }
 
-    public void FavoriteRecommendation(int id, String type, String username,
-                                     JSONArray arrayResult) {
-        JSONObject object = null;
+    public void FavoriteRecommendation(int id, String username, JSONArray arrayResult) {
+        JSONObject object;
         User unknownUser = null;
         ArrayList<Show> FoundShows = new ArrayList<>();
 
@@ -1478,16 +1433,16 @@ public class DataBase {
             object = writeObject(id, null, message);
         } else {
             for (int i = 0; i < movies.size(); i++) {
-                movies.get(i).setNumberOfFavourites((int) howManyFavourites(movies.get(i)));
+                movies.get(i).setNumberOfFavourites(howManyFavourites(movies.get(i)));
                 if (movies.get(i).getNumberOfFavourites() > 0 &&
-                    unknownUser.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+                    !unknownUser.getHistory().containsKey(movies.get(i).getTitle())) {
                     FoundShows.add(movies.get(i));
                 }
             }
             for (int i = 0; i < serials.size(); i++) {
-                serials.get(i).setNumberOfFavourites((int) howManyFavouritesSerial(serials.get(i)));
+                serials.get(i).setNumberOfFavourites(howManyFavouritesSerial(serials.get(i)));
                 if (serials.get(i).getNumberOfFavourites() > 0 &&
-                        unknownUser.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+                        !unknownUser.getHistory().containsKey(movies.get(i).getTitle())) {
                     FoundShows.add(serials.get(i));
                 }
             }
