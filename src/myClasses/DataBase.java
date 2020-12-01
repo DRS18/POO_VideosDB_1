@@ -1188,6 +1188,7 @@ public class DataBase {
         JSONObject object = null;
         User unknownUser = null;
         Map<String, Integer> popularGenres = new HashMap<>();
+        int verify = -1;
 
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getUsername().equals(username)) {
@@ -1228,6 +1229,7 @@ public class DataBase {
 
             int maximumSize = popularGenres.size();
             int ok = 0;
+
             Integer max = 0;
             String toSearch = null;
             ArrayList<Movie> tempMovies = new ArrayList<>();
@@ -1269,7 +1271,7 @@ public class DataBase {
 //                                tempMovies.get(i).getTitle());
                         String message = "PopularRecommendation result: " +
                                 tempMovies.get(i).getTitle();
-
+                        verify = 0;
                         object = writeObject(id, null, message);
                         ok = -1;
                         break;
@@ -1289,6 +1291,7 @@ public class DataBase {
 //                                tempSerials.get(i).getTitle());
                         String message = "PopularRecommendation result: " +
                                 tempSerials.get(i).getTitle();
+                        verify = 0;
 //                        System.out.println(message);
                         ok = -1;
                         object = writeObject(id, null, message);
@@ -1305,7 +1308,10 @@ public class DataBase {
                 ok ++;
             }
         }
-
+        if (verify == -1) {
+            String message = "PopularRecommendation cannot be applied!";
+            object = writeObject(id, null, message);
+        }
         arrayResult.add(object);
     }
 
