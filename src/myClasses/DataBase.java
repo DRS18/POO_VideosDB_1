@@ -9,6 +9,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 
@@ -979,20 +981,33 @@ public class DataBase {
 
         for (int i = 0; i < actors.size(); i++) {
             ok = 0;
+//            System.out.println("SIZEOF actors " + actors.size());
             for (int j = 0; j < words.size(); j++) {
 //                System.out.println("Look for " + words.get(j) + " in " + actors.get(i).getName());
+//                String regex = "\\B";
+//                regex += words.get(j);
+//                regex += "|";
+//                regex += words.get(j);
+//                regex += "\\B";
+//                Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+//                Matcher matcher = pattern.matcher(actors.get(i).getCareerDescription());
+//                ok = -1;
+//                while (matcher.find()) {
+//                    System.out.println(matcher.group());
+//                    ok = 0;
+//                    break;
+//                }
+//                if (ok == 0) break;
                 if (actors.get(i).getCareerDescription().indexOf(words.get(j)) == -1) {
                     ok = -1;
                     break;
                 }
             }
-            if (ok == -1) {
-                break;
-            } else {
+            if (ok != -1) {
                 result.add(actors.get(i));
             }
         }
-
+//        System.out.println("Size of foundactors " + result.size());
         return result;
     }
 
@@ -1004,6 +1019,7 @@ public class DataBase {
         JSONObject object = null;
 
         FoundActors = FoundActorsByWords(words, actors);
+
         if (FoundActors.size() == 0) {
             String message = "Query result: []";
             object = writeObject(id, null, message);
@@ -1238,6 +1254,7 @@ public class DataBase {
         ArrayList<Movie> FoundMovies = null;
         ArrayList<Serial> FoundSerials = null;
         ArrayList<Show> FoundShows = new ArrayList<>();
+        ArrayList<Show> tempShows = new ArrayList<>();
         List<String> tempList = new ArrayList<>();
         tempList.add(genre);
 
@@ -1263,12 +1280,20 @@ public class DataBase {
                 FoundShows.add(FoundSerials.get(i));
             }
 
+//            System.out.println("size = " + FoundShows.size());
             for (int i = 0; i < FoundShows.size(); i++) {
+
                 if (unknownUser.getHistory().containsKey(FoundShows.get(i).getTitle())) {
-                    FoundShows.remove(FoundShows.get(i));
+                    tempShows.add(FoundShows.get(i));
                 }
             }
 
+            for (int i = 0; i < tempShows.size(); i++) {
+//                System.out.println("Cautam " + tempShows.get(i).getTitle());
+                FoundShows.remove(tempShows.get(i));
+            }
+
+//            System.out.println("Size of foundshows " + FoundShows.size());
             FoundShows.sort(new MultipleComparators.CompareShoeByGeneralRating());
             Collections.reverse(FoundShows);
             FoundShows.sort(new MultipleComparators.CompareShowByTitle());
