@@ -452,6 +452,7 @@ Starting audit...
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1048:49: Parameter words should be final. [FinalParameters]
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1048:69: Parameter actors should be final. [FinalParameters]
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1048:86: 'actors' hides a field. [HiddenField]
+[ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1058: Line is longer than 100 characters (found 118). [LineLength]
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1079:5: Class 'DataBase' looks like designed for extension (can be subclassed), but the method 'queryDescriptionActors' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'DataBase' final or making the method 'queryDescriptionActors' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1079:5: Missing a Javadoc comment. [MissingJavadocMethod]
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/myClasses/DataBase.java:1079:40: Parameter id should be final. [FinalParameters]
@@ -598,4 +599,4 @@ Starting audit...
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/main/Main.java:215:67: ',' is preceded with whitespace. [NoWhitespaceBefore]
 [ERROR] /home/paune/Desktop/POO/TEME/Tema-1-POO-2020/./src/main/Main.java:219: Line is longer than 100 characters (found 107). [LineLength]
 Audit done.
-Checkstyle ends with 598 errors.
+Checkstyle ends with 599 errors.

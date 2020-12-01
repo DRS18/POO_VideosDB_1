@@ -1055,7 +1055,7 @@ public class DataBase {
             for (int j = 0; j < words.size(); j++) {
 //                System.out.println("Look for " + words.get(j) + " in " + actors.get(i).getName());
 
-                Pattern pattern = Pattern.compile(words.get(j), Pattern.CASE_INSENSITIVE);
+                Pattern pattern = Pattern.compile("[^a-zA-Z]" + words.get(j) + "[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(actors.get(i).getCareerDescription());
                 boolean matchFound = matcher.find();
                 if (!matchFound) {
