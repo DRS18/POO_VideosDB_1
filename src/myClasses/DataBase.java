@@ -941,6 +941,9 @@ public class DataBase {
 
         FoundActors.sort(new MultipleComparators.CompareActorByName());
         FoundActors.sort(new MultipleComparators.CompareActorByAverageRating());
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundActors);
+        }
 
         if (FoundActors.size() > 0) {
             String message = "Query result: [";
@@ -1081,6 +1084,10 @@ public class DataBase {
         JSONObject object = null;
 
         FoundActors = FoundActorsByWords(words, actors);
+
+//        for (int i = 0; i < FoundActors.size(); i++) {
+//            System.out.println(FoundActors.get(i).getName());
+//        }
 
         if (FoundActors.size() == 0) {
             String message = "Query result: []";
