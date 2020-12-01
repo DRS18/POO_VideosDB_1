@@ -371,34 +371,61 @@ public class DataBase {
 
         FoundMovies = FoundMoviesByFilters(years, genres, words, awards, movies);
 //        System.out.println(FoundMovies.size());
-        for (int i = 0; i < FoundMovies.size(); i++) {
+
+        FoundMovies.sort(new MultipleComparators.CompareShowByTitle());
+        FoundMovies.sort(new MultipleComparators.CompareShowByFavourites());
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundMovies);
         }
+//        for (int i = 0; i < FoundMovies.size(); i++) {
+//            System.out.println(FoundMovies.get(i).getTitle());
+//        }
+
         // Now we have movies by filters
-        for (int i = 0; i < FoundMovies.size(); i++) {
-            if (indexing.containsKey(howManyFavourites(FoundMovies.get(i))) &&
-                    howManyFavourites(FoundMovies.get(i)) > 0) {
-                ArrayList<String> temp = indexing.get(howManyFavourites(FoundMovies.get(i)));
-                temp.add(temp.size(), FoundMovies.get(i).getTitle());
-            } else if (howManyFavourites(FoundMovies.get(i)) > 0){
-                ArrayList<String> list = new ArrayList<>();
-                list.add(list.size(), FoundMovies.get(i).getTitle());
-                indexing.put(howManyFavourites(FoundMovies.get(i)), list);
+//        for (int i = 0; i < FoundMovies.size(); i++) {
+//            if (indexing.containsKey(howManyFavourites(FoundMovies.get(i))) &&
+//                    howManyFavourites(FoundMovies.get(i)) > 0) {
+//                ArrayList<String> temp = indexing.get(howManyFavourites(FoundMovies.get(i)));
+//                temp.add(temp.size(), FoundMovies.get(i).getTitle());
+//            } else if (howManyFavourites(FoundMovies.get(i)) > 0){
+//                ArrayList<String> list = new ArrayList<>();
+//                list.add(list.size(), FoundMovies.get(i).getTitle());
+//                indexing.put(howManyFavourites(FoundMovies.get(i)), list);
+//            }
+//        }
+//
+//
+//
+//        if (indexing.size() > 0){
+//            String message = "Query result: ";
+//            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+//            int ok = 0;
+//            for (Integer temp : sortedMap.keySet()) {
+//                ok++;
+//                if (ok == number) break;
+//                message = message + sortedMap.get(temp);
+//            }
+////            System.out.println(message);
+//            object = writeObject(id, null, message);
+//        } else {
+//            String message = "Query result: []";
+//            object = writeObject(id, null, message);
+//        }
+
+        if (FoundMovies.size() > 0) {
+            String message = "Query result: [";
+            for (int i = 0; i < FoundMovies.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundMovies.get(i).getTitle();
+                if (i < FoundMovies.size() - 1 && i < number - 1) {
+                    message = message + ", ";
+                }
             }
-        }
-
-
-
-        if (indexing.size() > 0){
-            String message = "Query result: ";
-            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
-            int ok = 0;
-            for (Integer temp : sortedMap.keySet()) {
-                ok++;
-                if (ok == number) break;
-                message = message + sortedMap.get(temp);
-            }
-//            System.out.println(message);
+            message = message + "]";
             object = writeObject(id, null, message);
+//            System.out.println(message);
         } else {
             String message = "Query result: []";
             object = writeObject(id, null, message);
@@ -963,14 +990,29 @@ public class DataBase {
         }
 
 
-        FoundActors.sort(new MultipleComparators.CompareActorByName());
+//        FoundActors.sort(new MultipleComparators.CompareActorByName());
+
 //        FoundActors.sort(new MultipleComparators.ValueComparator<>());
 //        System.out.println("FoundActors size = " + FoundActors.size());
         if (FoundActors.size() == 0) {
             String message = "Query result: []";
             object = writeObject(id, null, message);
         } else {
+//            System.out.println("-------------------------------------------");
+//            for (int i = 0; i < FoundActors.size(); i++) {
+//                System.out.println(FoundActors.get(i).getName() + " " + FoundActors.get(i).getNumberOfAwards());
+//            }
+            FoundActors.sort(new MultipleComparators.CompareActorByName());
             FoundActors.sort(new MultipleComparators.CompareActorByNumberOfAwards());
+            if (sortType.equals("desc")) {
+                Collections.reverse(FoundActors);
+            }
+//            System.out.println("**************");
+//            for (int i = 0; i < FoundActors.size(); i++) {
+//                System.out.println(FoundActors.get(i).getName() + " " + FoundActors.get(i).getNumberOfAwards());
+//            }
+//            System.out.println("-------------------------------------------");
+
             String message = "Query result: [";
             for (int i = 0; i < FoundActors.size(); i++) {
                 if (i == number) {
