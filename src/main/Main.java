@@ -204,7 +204,7 @@ public final class Main {
                             input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
                             arrayResult);
                 } else if (input.getCommands().get(i).getType().equals("popular")) {
-                    System.out.println(input.getCommands().get(i).toString());
+//                    System.out.println(input.getCommands().get(i).toString());
                     my_db.popularRecommendation(input.getCommands().get(i).getActionId(),
                             input.getCommands().get(i).getType(), input.getCommands().get(i).getUsername(),
                             arrayResult);

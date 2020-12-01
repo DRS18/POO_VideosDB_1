@@ -1146,21 +1146,24 @@ public class DataBase {
                 }
             }
 
-            System.out.println(popularGenres.toString());
+//            System.out.println(popularGenres.toString());
 
-            int ok = -1;
+            int maximumSize = popularGenres.size();
+            int ok = 0;
             Integer max = 0;
             String toSearch = null;
             ArrayList<Movie> tempMovies = new ArrayList<>();
             ArrayList<Serial> tempSerials = new ArrayList<>();
             List<String> tempGenres= new ArrayList<>();
 
-            while (ok < 1) {
+            while (ok < 10) {
                 max = 0;
+//                ok = 0;
                 tempMovies.clear();
                 tempSerials.clear();
                 tempGenres.clear();
                 toSearch = null;
+
                 Iterator it = popularGenres.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry)it.next();
@@ -1170,8 +1173,9 @@ public class DataBase {
                     }
 //                    it.remove();
                 }
+
 //                ok++;
-                System.out.println("We Want to search " + toSearch + " " + max);
+//                System.out.println("We Want to search " + toSearch + " " + max);
                 popularGenres.remove(toSearch);
 
                 tempGenres.add(toSearch);
@@ -1179,43 +1183,50 @@ public class DataBase {
                 tempMovies = FoundMoviesByFilters(null, tempGenres, null, null, movies);
                 tempSerials= FoundSerialsByFilters(null, tempGenres, null, null ,serials);
 
-
+//                System.out.println(tempMovies.size() + "---" + tempSerials.size());
                 for (int i = 0; i < tempMovies.size(); i++) {
 
                     if (unknownUser.getHistory().containsKey(tempMovies.get(i).getTitle()) == false) {
-                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut " +
-                                tempMovies.get(i).getTitle());
+//                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut " +
+//                                tempMovies.get(i).getTitle());
                         String message = "PopularRecommendation result: " +
                                 tempMovies.get(i).getTitle();
+
                         object = writeObject(id, null, message);
-                        ok = 0;
+                        ok = -1;
                         break;
                     }
                 }
 
-                if (ok == 0) break;
+                if (ok == -1) {
+                    arrayResult.add(object);
+                    return;
+
+                }
+
                 for (int i = 0; i < tempSerials.size(); i++) {
 
                     if (unknownUser.getHistory().containsKey(tempSerials.get(i).getTitle()) == false) {
-                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut!!!! " +
-                                tempSerials.get(i).getTitle());
+//                        System.out.println("Cautam daca " + unknownUser.getUsername() + " a vazut!!!! " +
+//                                tempSerials.get(i).getTitle());
                         String message = "PopularRecommendation result: " +
-                                tempMovies.get(i).getTitle();
-
+                                tempSerials.get(i).getTitle();
+//                        System.out.println(message);
+                        ok = -1;
                         object = writeObject(id, null, message);
-                        ok = 0;
+
                         break;
                     }
                 }
-                if (ok  == 0) {
-                    break;
+                if (ok == -1) {
+                    System.out.println("L am schimbat pe ok");
+                    arrayResult.add(object);
+                    return;
+
                 }
-
+                ok ++;
             }
-
-
         }
-
 
         arrayResult.add(object);
     }
