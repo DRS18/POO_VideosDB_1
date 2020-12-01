@@ -1247,41 +1247,105 @@ public class DataBase {
             }
         }
 
-        FoundMovies = FoundMoviesByFilters(null, tempList, null, null, movies);
-        FoundSerials = FoundSerialsByFilters(null, tempList, null, null, serials);
-
-        for (int i = 0; i < FoundMovies.size(); i++) {
-//            System.out.println(FoundMovies.get(i).getTitle() + "---" + FoundMovies.get(i).getRating());
-            FoundShows.add(FoundMovies.get(i));
-        }
-        for (int i = 0; i < FoundSerials.size(); i++) {
-//            System.out.println(FoundSerials.get(i).getTitle() + "---" + FoundSerials.get(i).getRating());
-            FoundShows.add(FoundSerials.get(i));
-        }
-
-        for (int i = 0; i < FoundShows.size(); i++) {
-            if (unknownUser.getHistory().containsKey(FoundShows.get(i).getTitle())) {
-                FoundShows.remove(FoundShows.get(i));
-            }
-        }
-
-        FoundShows.sort(new MultipleComparators.CompareShoeByGeneralRating());
-        Collections.reverse(FoundShows);
-        FoundShows.sort(new MultipleComparators.CompareShowByTitle());
-
-        if (FoundShows.size() == 0) {
-            String message = "SearchRecommendation cannot be applied!";
+        if (unknownUser.getSubscriptionType().equals("BASIC")) {
+            String message = "PopularRecommendation cannot be applied!";
             object = writeObject(id, null, message);
         } else {
-            String message = "SearchRecommendation result: [";
+            FoundMovies = FoundMoviesByFilters(null, tempList, null, null, movies);
+            FoundSerials = FoundSerialsByFilters(null, tempList, null, null, serials);
+
+            for (int i = 0; i < FoundMovies.size(); i++) {
+//            System.out.println(FoundMovies.get(i).getTitle() + "---" + FoundMovies.get(i).getRating());
+                FoundShows.add(FoundMovies.get(i));
+            }
+            for (int i = 0; i < FoundSerials.size(); i++) {
+//            System.out.println(FoundSerials.get(i).getTitle() + "---" + FoundSerials.get(i).getRating());
+                FoundShows.add(FoundSerials.get(i));
+            }
+
             for (int i = 0; i < FoundShows.size(); i++) {
-                message = message + FoundShows.get(i).getTitle();
-                if (i < FoundShows.size() - 1) {
-                    message = message + ", ";
+                if (unknownUser.getHistory().containsKey(FoundShows.get(i).getTitle())) {
+                    FoundShows.remove(FoundShows.get(i));
                 }
             }
-            message = message + "]";
+
+            FoundShows.sort(new MultipleComparators.CompareShoeByGeneralRating());
+            Collections.reverse(FoundShows);
+            FoundShows.sort(new MultipleComparators.CompareShowByTitle());
+
+            if (FoundShows.size() == 0) {
+                String message = "SearchRecommendation cannot be applied!";
+                object = writeObject(id, null, message);
+            } else {
+                String message = "SearchRecommendation result: [";
+                for (int i = 0; i < FoundShows.size(); i++) {
+                    message = message + FoundShows.get(i).getTitle();
+                    if (i < FoundShows.size() - 1) {
+                        message = message + ", ";
+                    }
+                }
+                message = message + "]";
+                object = writeObject(id, null, message);
+            }
+        }
+        arrayResult.add(object);
+    }
+
+    public Integer howManyFavouritesSerial (Serial serial) {
+        Integer n = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getHistory().containsKey(serial.getTitle()) &&
+                    users.get(i).getFavoriteMovies().contains(serial.getTitle())) {
+                n++;
+            }
+        }
+
+        return n;
+    }
+
+    public void FavoriteRecommendation(int id, String type, String username,
+                                     JSONArray arrayResult) {
+        JSONObject object = null;
+        User unknownUser = null;
+        ArrayList<Show> FoundShows = new ArrayList<>();
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                unknownUser = users.get(i);
+            }
+        }
+
+        if (unknownUser.getSubscriptionType().equals("BASIC")) {
+            String message = "PopularRecommendation cannot be applied!";
             object = writeObject(id, null, message);
+        } else {
+            for (int i = 0; i < movies.size(); i++) {
+                movies.get(i).setNumberOfFavourites((int) howManyFavourites(movies.get(i)));
+                if (movies.get(i).getNumberOfFavourites() > 0 &&
+                    unknownUser.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+                    FoundShows.add(movies.get(i));
+                }
+            }
+            for (int i = 0; i < serials.size(); i++) {
+                serials.get(i).setNumberOfFavourites((int) howManyFavouritesSerial(serials.get(i)));
+                if (serials.get(i).getNumberOfFavourites() > 0 &&
+                        unknownUser.getHistory().containsKey(movies.get(i).getTitle()) == false) {
+                    FoundShows.add(serials.get(i));
+                }
+            }
+            FoundShows.sort(new MultipleComparators.CompareShowByTitle());
+            FoundShows.sort(new MultipleComparators.CompareShowByFavourites());
+            if (FoundShows.size() == 0) {
+                String message ="PopularRecommendation cannot be applied!";
+                object = writeObject(id, null, message);
+            } else {
+//                System.out.println(FoundShows.get(0).getTitle());
+                String message = "FavoriteRecommendation result: ";
+                message = message + FoundShows.get(0).getTitle();
+                object = writeObject(id, null, message);
+            }
+
         }
         arrayResult.add(object);
     }

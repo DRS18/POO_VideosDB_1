@@ -11,6 +11,17 @@ public abstract class Show {
     private ArrayList<String> genres;
     private int NumberOfViews = 0;
     private double ShowGeneralRating;
+    private int numberOfFavourites;
+
+    public int getNumberOfFavourites() {
+        return numberOfFavourites;
+    }
+
+    public void setNumberOfFavourites(int numberOfFavourites) {
+        this.numberOfFavourites = numberOfFavourites;
+    }
+
+
 
     public double getShowGeneralRating() {
         return ShowGeneralRating;

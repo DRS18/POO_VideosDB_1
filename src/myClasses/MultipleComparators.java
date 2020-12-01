@@ -11,6 +11,12 @@ public final class MultipleComparators {
         }
     }
 
+    public final static class CompareShowByFavourites implements Comparator<Show> {
+        public int compare(final Show a, final Show b) {
+            return a.getNumberOfFavourites() - b.getNumberOfFavourites();
+        }
+    }
+
     public final static class CompareActorByName implements Comparator<Actor> {
         public int compare(final Actor a, final Actor b) {
             return a.getName().compareTo(b.getName());
