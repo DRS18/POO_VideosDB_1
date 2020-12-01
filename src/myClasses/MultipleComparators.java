@@ -53,6 +53,12 @@ public final class MultipleComparators {
         }
     }
 
+    public final static class CompareMovieByDuration implements  Comparator<Movie> {
+        public int compare (final Movie a, final Movie b) {
+            return a.getDuration() - b.getDuration();
+        }
+    }
+
     public final static class CompareSerialByRating implements Comparator<Serial> {
         public int compare (final Serial a, final Serial b) {
             return Double.compare(a.getRating(), b.getRating());

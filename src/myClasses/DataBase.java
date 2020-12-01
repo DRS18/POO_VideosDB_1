@@ -557,42 +557,70 @@ public class DataBase {
         Map<Integer, ArrayList<String>> indexing = new HashMap<>();
         JSONObject object = null;
 
-        for (int i = 0; i < FoundMovies.size(); i++) {
-            if (indexing.containsKey(FoundMovies.get(i).getDuration())) {
-                ArrayList<String> temp = indexing.get(FoundMovies.get(i).getDuration());
-                temp.add(temp.size(), FoundMovies.get(i).getTitle());
-            } else {
-                ArrayList<String> list = new ArrayList<>();
-                list.add(list.size(), FoundMovies.get(i).getTitle());
-                indexing.put(FoundMovies.get(i).getDuration(), list);
-            }
+//        for (int i = 0; i < FoundMovies.size(); i++) {
+//            System.out.println(FoundMovies.get(i).getTitle());
+//        }
+
+        FoundMovies.sort(new MultipleComparators.CompareShowByTitle());
+        FoundMovies.sort(new MultipleComparators.CompareMovieByDuration());
+        if (sortType.equals("desc")) {
+            Collections.reverse(FoundMovies);
         }
 
-        if (indexing.size() > 0){
+        if (FoundMovies.size() > 0) {
             String message = "Query result: [";
-            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
-            int ok = 0;
-            for (Integer temp : sortedMap.keySet()) {
-                ok++;
-
-                if (ok == number) break;
-                if (ok > 1) {
+            for (int i = 0; i < FoundMovies.size(); i++) {
+                if (i == number) {
+                    break;
+                }
+                message = message + FoundMovies.get(i).getTitle();
+                if (i < FoundMovies.size() - 1) {
                     message = message + ", ";
                 }
-
-                String eliminateBrackets = sortedMap.get(temp).toString();
-                eliminateBrackets = eliminateBrackets.replaceAll("\\[", "").replaceAll("\\]","");
-//                System.out.println(sortedMap.get(temp).toString());
-                message = message + eliminateBrackets;
             }
             message = message + "]";
-//            System.out.println(message);
             object = writeObject(id, null, message);
         } else {
             String message = "Query result: []";
-//            System.out.println(message);
             object = writeObject(id, null, message);
         }
+
+//        for (int i = 0; i < FoundMovies.size(); i++) {
+//            if (indexing.containsKey(FoundMovies.get(i).getDuration())) {
+//                ArrayList<String> temp = indexing.get(FoundMovies.get(i).getDuration());
+//                temp.add(temp.size(), FoundMovies.get(i).getTitle());
+//            } else {
+//                ArrayList<String> list = new ArrayList<>();
+//                list.add(list.size(), FoundMovies.get(i).getTitle());
+//                indexing.put(FoundMovies.get(i).getDuration(), list);
+//            }
+//        }
+//
+//        if (indexing.size() > 0){
+//            String message = "Query result: [";
+//            Map<Integer, ArrayList<String>> sortedMap = new TreeMap<Integer, ArrayList<String>>(indexing);
+//            int ok = 0;
+//            for (Integer temp : sortedMap.keySet()) {
+//                ok++;
+//
+//                if (ok == number) break;
+//                if (ok > 1) {
+//                    message = message + ", ";
+//                }
+//
+//                String eliminateBrackets = sortedMap.get(temp).toString();
+//                eliminateBrackets = eliminateBrackets.replaceAll("\\[", "").replaceAll("\\]","");
+////                System.out.println(sortedMap.get(temp).toString());
+//                message = message + eliminateBrackets;
+//            }
+//            message = message + "]";
+////            System.out.println(message);
+//            object = writeObject(id, null, message);
+//        } else {
+//            String message = "Query result: []";
+////            System.out.println(message);
+//            object = writeObject(id, null, message);
+//        }
 
         arrayResult.add(object);
     }
@@ -860,12 +888,19 @@ public class DataBase {
 
         if (FoundUsers.size() > 0) {
             String message = "Query result: [";
+
+            System.out.println("------------------");
+            for (int i = 0; i < FoundUsers.size(); i++) {
+                System.out.println(FoundUsers.get(i).getUsername());
+            }
+
+
             for (int i = 0; i < FoundUsers.size(); i++) {
                 if (i == number) {
                     break;
                 }
                 message = message + FoundUsers.get(i).getUsername();
-                if (i < FoundUsers.size() - 1) {
+                if (i < FoundUsers.size() - 1 && i < number-1) {
                     message = message + ", ";
                 }
             }
@@ -875,6 +910,24 @@ public class DataBase {
             String message = "Query result: []";
             object = writeObject(id, null, message);
         }
+
+//        if (FoundUsers.size() > 0) {
+//            String message = "Query result: [";
+//            for (int i = 0; i < FoundUsers.size(); i++) {
+//                if (i == number) {
+//                    break;
+//                }
+//                message = message + FoundUsers.get(i).getUsername();
+//                if (i < FoundUsers.size() - 1) {
+//                    message = message + ", ";
+//                }
+//            }
+//            message = message + "]";
+//            object = writeObject(id, null, message);
+//        } else {
+//            String message = "Query result: []";
+//            object = writeObject(id, null, message);
+//        }
 
         arrayResult.add(object);
     }
@@ -1089,11 +1142,15 @@ public class DataBase {
 //            System.out.println(FoundActors.get(i).getName());
 //        }
 
+
         if (FoundActors.size() == 0) {
             String message = "Query result: []";
             object = writeObject(id, null, message);
         } else {
             FoundActors.sort(new MultipleComparators.CompareActorByName());
+            if (sortType.equals("desc")) {
+                Collections.reverse(FoundActors);
+            }
             String message = "Query result: [";
             for (int i = 0; i < FoundActors.size(); i++) {
                 if (i == number) {
