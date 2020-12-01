@@ -321,7 +321,7 @@ public class DataBase {
             // Filter movies by year
             ok = -1;
             yearsCheck = -1;
-            if (years != null) {
+            if (years != null && years.size() > 0 && years.get(0) != null) {
                 for (int j = 0; j < years.size(); j++) {
 //                    System.out.println("Cautam " + years.get(j) + " in " + shows.get(i).getTitle());
                     if (years.get(j) != null && shows.get(i).getYear() == parseInt(years.get(j))) {
@@ -366,17 +366,27 @@ public class DataBase {
                                       JSONArray arrayResult) {
 
         ArrayList<Movie> FoundMovies = null;
-        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
+//        Map<Integer, ArrayList<String>> indexing = new HashMap<>();
         JSONObject object = null;
 
         FoundMovies = FoundMoviesByFilters(years, genres, words, awards, movies);
 //        System.out.println(FoundMovies.size());
 
+//        System.out.println("--------------------------------------------------");
+        for (int i = 0; i < FoundMovies.size(); i++) {
+            FoundMovies.get(i).setNumberOfFavourites(howManyFavourites(FoundMovies.get(i)));
+//            System.out.println(FoundMovies.get(i).getTitle() + " " + FoundMovies.get(i).getNumberOfFavourites());
+        }
+//        System.out.println("*******************");
         FoundMovies.sort(new MultipleComparators.CompareShowByTitle());
         FoundMovies.sort(new MultipleComparators.CompareShowByFavourites());
         if (sortType.equals("desc")) {
             Collections.reverse(FoundMovies);
         }
+//        for (int i = 0; i < FoundMovies.size(); i++) {
+//            System.out.println(FoundMovies.get(i).getTitle() + " " + FoundMovies.get(i).getNumberOfFavourites());
+//        }
+//        System.out.println("--------------------------------------------------");
 //        for (int i = 0; i < FoundMovies.size(); i++) {
 //            System.out.println(FoundMovies.get(i).getTitle());
 //        }
@@ -446,7 +456,7 @@ public class DataBase {
         for (int i = 0; i < shows.size(); i++) {
             // Filter movies by year
             ok = -1;
-            if (years != null) {
+            if (years != null && years.size() > 0 && years.get(0) != null) {
                 for (int j = 0; j < years.size(); j++) {
                     if (years.get(j) != null && shows.get(i).getYear() == parseInt(years.get(j))) {
                         ok = 0;
@@ -462,7 +472,7 @@ public class DataBase {
             ok = -1;
 
             // Filter movies by genres
-            if (genres != null) {
+            if (genres.size() > 0 && genres.get(0) != null) {
                 for (int j = 0; j < genres.size(); j++) {
                     if (genres.get(j) != null && shows.get(i).getGenres().contains(genres.get(j))) {
                         ok = 0;
@@ -661,6 +671,7 @@ public class DataBase {
                                      List<String> words, List<String> awards, String sortType,
                                      JSONArray arrayResult) {
         ArrayList<Movie> FoundMovies = FoundMoviesByFilters(years, genres, null, null, movies);
+//        System.out.println("FodMovies size = " + FoundMovies.size());
         JSONObject object = null;
 
 

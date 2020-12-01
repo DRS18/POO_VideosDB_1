@@ -88,7 +88,7 @@ public final class Main {
         for (int i = 0; i < input.getCommands().size(); i++) {
             if (input.getCommands().get(i).getActionType().equals("command") &&
                     input.getCommands().get(i).getType().equals("favorite")){
-//                System.out.println(actions.get(i).toString());
+//                System.out.println(input.getCommands().get(i).toString());
                 my_db.commandFavorite(input.getCommands().get(i).getActionId(),
                         input.getCommands().get(i).getUsername(),
                         input.getCommands().get(i).getTitle(),
